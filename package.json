@@ -1,0 +1,40 @@
+{
+  "name": "my-monorepo",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "check": "turbo run check",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "lint": "oxlint apps packages tooling tests",
+    "fmt": "oxfmt . --disable-nested-config",
+    "fmt:check": "oxfmt . --check --disable-nested-config",
+    "commit": "czg",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.2.2",
+    "@commitlint/config-conventional": "^21.2.2",
+    "@types/node": "^24.13.4",
+    "czg": "^1.14.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.5.1",
+    "oxfmt": "^0.68.0",
+    "oxlint": "^1.83.0",
+    "turbo": "^2.10.13",
+    "typescript": "~7.0.2"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "oxlint --fix",
+      "oxfmt"
+    ],
+    "*.{js,jsx,json,jsonc,md,yml,yaml,cjs,mjs,css}": [
+      "oxfmt"
+    ]
+  },
+  "engines": {
+    "node": ">=24 <25"
+  }
+}

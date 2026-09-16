@@ -1,0 +1,68 @@
+/// 角色表，支持通过父角色构建分层角色体系
+model Role {
+  /// 角色ID，UUID 主键
+  id              String               @id @default(uuid()) @db.VarChar(36)
+  /// 业务标识，如 super_admin / custom_ops，全局唯一
+  key             String               @unique(map: "role_key_key") @db.VarChar(64)
+  /// 显示名称
+  label           String               @db.Text
+  /// 角色说明
+  description     String               @default("") @db.VarChar(1024)
+  /// 权限级别，数值越大权限越高
+  level           Int
+  /// 父角色ID，空值表示顶级角色
+  parentId        String?              @map("parent_id") @db.VarChar(36)
+  /// 创建时间
+  createdTime     DateTime             @default(now()) @map("create_time")
+  /// 更新时间
+  updatedTime     DateTime             @updatedAt @map("update_time")
+  /// 父角色，父角色删除后当前角色提升为顶级角色
+  parent          Role?                @relation("RoleHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  /// 直接子角色列表
+  children        Role[]               @relation("RoleHierarchy")
+  /// 获授该角色的用户关联
+  userBusinessRoles UserBusinessRole[]
+
+  @@index([parentId], map: "role_parent_id_idx")
+  @@map("role")
+}
+
+/// 系统角色表。内置角色由应用或数据库迁移初始化，不属于可编辑的业务角色
+model SystemRole {
+  /// 角色ID，UUID 主键
+  id          String   @id @default(uuid()) @db.VarChar(36)
+  /// 系统标识，如 SUPER_ADMIN / ADMIN / USER / GUEST
+  key         String   @unique(map: "system_role_key_key") @db.VarChar(64)
+  /// 显示名称
+  label       String   @db.Text
+  /// 角色说明
+  description String   @default("") @db.VarChar(1024)
+  /// 是否内置角色
+  builtin     Boolean  @default(false)
+  /// 创建时间
+  createdTime DateTime @default(now()) @map("create_time")
+  /// 更新时间
+  updatedTime DateTime @updatedAt @map("update_time")
+  /// 获授该系统角色的用户
+  users       User[]
+
+  @@map("system_role")
+}
+
+/// 用户与角色的多对多关联表
+model UserBusinessRole {
+  /// 用户ID
+  userId      String   @map("user_id") @db.VarChar(36)
+  /// 角色ID
+  businessRoleId String @map("role_id") @db.VarChar(36)
+  /// 授权时间
+  createdTime DateTime @default(now()) @map("create_time")
+  /// 所属用户，删除用户时级联删除授权关系
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// 所属角色，删除角色时级联删除授权关系
+  businessRole Role    @relation(fields: [businessRoleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, businessRoleId])
+  @@index([businessRoleId], map: "user_role_role_id_idx")
+  @@map("user_role")
+}

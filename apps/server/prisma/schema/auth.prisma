@@ -1,0 +1,66 @@
+/// 认证会话表，一行代表一次登录产生的会话（refresh token 的生命周期）
+model AuthSession {
+  /// 会话ID，UUID，同时作为 access token 的 jti 声明
+  id            String             @id @db.VarChar(36)
+  /// 所属用户ID
+  userId        String             @map("user_id") @db.VarChar(36)
+  /// 会话过期时间，超过后 refresh token 不可用
+  expiresTime   DateTime           @map("expires_time")
+  /// 撤销时间，非空表示会话已注销（注销/改密/超额淘汰），保留一段时间用于审计
+  revokedTime   DateTime?          @map("revoked_time")
+  /// 最后使用时间，登录和刷新令牌时更新，用于淘汰最久未使用的会话
+  lastUsedTime  DateTime           @default(now()) @map("last_used_time")
+  /// 登录/刷新时的客户端 IP（已归一化，最长 45 字符兼容 IPv6）
+  ipAddress     String?            @map("ip_address") @db.VarChar(45)
+  /// 登录/刷新时的客户端 User-Agent，用于会话管理页面展示设备信息
+  userAgent     String?            @map("user_agent") @db.VarChar(512)
+  /// 创建时间
+  createdTime   DateTime           @default(now()) @map("create_time")
+  /// 更新时间
+  updatedTime   DateTime           @updatedAt @map("update_time")
+  /// 所属用户，用户删除时级联删除会话
+  user          User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// 本会话签发过的 refresh token family
+  refreshTokens AuthRefreshToken[]
+
+  @@index([userId, revokedTime, expiresTime])
+  @@index([userId, revokedTime, lastUsedTime], map: "auth_session_user_active_last_used_idx")
+  @@index([expiresTime], map: "auth_session_expires_time_idx")
+  @@index([revokedTime], map: "auth_session_revoked_time_idx")
+  @@map("auth_session")
+}
+
+/// 多实例定时任务租约锁
+model AuthJobLock {
+  /// 任务名称
+  name        String   @id @db.VarChar(64)
+  /// 本次持锁实例的随机标识
+  owner       String   @db.VarChar(36)
+  /// 租约过期时间，防止进程异常退出后形成死锁
+  expiresTime DateTime @map("expires_time")
+
+  @@index([expiresTime], map: "auth_job_lock_expires_time_idx")
+  @@map("auth_job_lock")
+}
+
+/// Refresh Token 历史表，用于原子轮换和检测任意旧令牌重放
+model AuthRefreshToken {
+  /// Token 记录ID，UUID 主键
+  id           String      @id @default(uuid()) @db.VarChar(36)
+  /// 所属认证会话
+  sessionId    String      @map("session_id") @db.VarChar(36)
+  /// refresh token 的 SHA-256 哈希值，不保存原始令牌
+  tokenHash    String      @unique(map: "auth_refresh_token_hash_key") @map("token_hash") @db.Char(64)
+  /// 首次成功轮换时间，非空表示令牌已被消费
+  consumedTime DateTime?   @map("consumed_time")
+  /// Token 过期时间
+  expiresTime  DateTime    @map("expires_time")
+  /// 创建时间
+  createdTime  DateTime    @default(now()) @map("create_time")
+  /// 所属会话，会话删除时级联清理 Token family
+  session      AuthSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId, consumedTime], map: "auth_refresh_token_session_consumed_idx")
+  @@index([expiresTime], map: "auth_refresh_token_expires_time_idx")
+  @@map("auth_refresh_token")
+}

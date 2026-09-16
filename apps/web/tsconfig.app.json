@@ -1,0 +1,17 @@
+{
+  "extends": "../../tooling/typescript/tsconfig.react.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "types": ["vite/client"],
+    "allowArbitraryExtensions": true,
+
+    /* 前端源码与工作区 UI 包、工具包的专用别名 */
+    "paths": {
+      "@/*": ["./src/*"],
+      "@workspace/common/*": ["../../packages/common/src/*"],
+      "@workspace/ui/*": ["../../packages/ui/src/*"],
+      "@workspace/utils/shared/*": ["../../packages/utils/shared/src/*"]
+    }
+  },
+  "include": ["src"]
+}

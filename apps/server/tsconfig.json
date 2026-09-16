@@ -1,0 +1,31 @@
+{
+  "$schema": "https://www.schemastore.org/tsconfig.json",
+  "extends": "../../tooling/typescript/tsconfig.base.json",
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "types": ["node"],
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "sourceMap": true,
+    "strictPropertyInitialization": false,
+    "outDir": "./dist",
+    "rootDir": "../../",
+    "incremental": true,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@/*": ["./src/*"],
+      "@app/library": ["./libs/library/src"],
+      "@app/library/*": ["./libs/library/src/*"],
+      "@workspace/common/*": ["../../packages/common/src/*"],
+      "@workspace/utils/node/*": ["../../packages/utils/node/src/*"],
+      "@workspace/utils/shared/*": ["../../packages/utils/shared/src/*"]
+    }
+  }
+}

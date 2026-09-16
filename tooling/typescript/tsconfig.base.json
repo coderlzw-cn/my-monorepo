@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    /* 不依赖运行时和构建工具的公共类型检查基线 */
+    "target": "ES2023",
+    "moduleDetection": "force",
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
+  }
+}

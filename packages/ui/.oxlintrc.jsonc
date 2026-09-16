@@ -1,0 +1,20 @@
+{
+  "$schema": "../../node_modules/oxlint/configuration_schema.json",
+  "extends": ["../../.oxlintrc.jsonc"],
+  "plugins": ["react"],
+  "jsPlugins": ["eslint-plugin-better-tailwindcss"],
+  "rules": {
+    // Axios 同时提供默认导出和具名导出，允许通过 axios.create 调用静态成员
+    "react/rules-of-hooks": "error",
+    "react/only-export-components": ["warn", { "allowConstantExport": true }],
+    // React 17+ 使用自动 JSX 运行时（tsconfig 的 jsx: react-jsx），无需手动引入 React
+    "react/react-in-jsx-scope": "off",
+  },
+  "settings": {
+    // 使用的是 Tailwind CSS v4，还应该配置 settings，把插件指向 Tailwind 的 CSS 入口
+    "better-tailwindcss": {
+      // Web 应用通过 @workspace/ui 导入 Tailwind v4 的 CSS 入口
+      "entryPoint": "./src/styles/globals.css",
+    },
+  },
+}

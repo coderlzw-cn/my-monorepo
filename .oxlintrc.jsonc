@@ -1,0 +1,20 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "oxc", "import", "unicorn"],
+  // 仓库公共规则：适用于前端、Node.js/NestJS 服务和共享包
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "perf": "warn",
+  },
+  "rules": {
+        "import/no-named-as-default-member": "off",
+    // 样式、polyfill、reflect-metadata 等副作用导入是合法用法
+    "import/no-unassigned-import": "off",
+    // 允许保留用于后续实现的空占位文件
+    "unicorn/no-empty-file": "off",
+    // NestJS 的模块、守卫等由装饰器元数据定义，可保留空类体
+    "typescript/no-extraneous-class": ["error", { "allowWithDecorator": true }],
+  },
+  "ignorePatterns": ["**/node_modules/**", "**/dist", "**/coverage", "**/src/generated/**", "**/stats.html", "**/.devServer"],
+}

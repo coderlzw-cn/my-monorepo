@@ -1,0 +1,57 @@
+# Dependencies and build outputs
+node_modules
+dist
+dist-ssr
+build
+coverage
+.nyc_output
+.turbo
+.nest
+.pnpm-store
+
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Local and generated files
+*.local
+stats.html
+.devServer
+.temp
+.tmp
+pids
+*.pid
+*.seed
+*.pid.lock
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Server secrets; the public verification key is intentionally tracked
+apps/server/.env.*
+!apps/server/.env.example
+*.pem
+!apps/server/public.pem
+
+# Editors and operating systems
+.idea
+.DS_Store
+**/.vscode/*
+!**/.vscode/extensions.json
+!**/.vscode/settings.json
+!**/.vscode/tasks.json
+!**/.vscode/launch.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.project
+.classpath
+.c9
+*.launch
+.settings
+*.sublime-workspace

@@ -1,0 +1,12 @@
+{
+  "extends": "../../tooling/typescript/tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2023", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "noEmit": true,
+    "types": ["node"],
+    "verbatimModuleSyntax": true
+  },
+  "include": ["browser/src", "node/src", "shared/src"]
+}

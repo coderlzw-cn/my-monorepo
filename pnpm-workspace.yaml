@@ -1,0 +1,16 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+  - "packages/*/*"
+allowBuilds:
+  "@parcel/watcher": false
+  "@prisma/engines": true
+  "@scarf/scarf": true
+  '@swc/core': true
+  bcrypt: true
+  esbuild: true
+  msgpackr-extract: true
+  prisma: true
+  protobufjs: true
+  unrs-resolver: true
+  workerd: true

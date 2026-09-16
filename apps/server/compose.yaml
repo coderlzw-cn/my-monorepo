@@ -1,0 +1,25 @@
+services:
+  app:
+    build:
+      # 使用 monorepo 根目录作为构建上下文，以便复用根 workspace 和锁文件。
+      context: ../..
+      dockerfile: apps/server/Dockerfile
+    image: nestjs-webpack-template:latest
+    init: true
+    # 0 表示 ApplicationControlService.stop()，保持停止；
+    # restart() 使用非 0 退出码，会触发容器重启。
+    restart: on-failure
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 3000
+      PREFIX_API: api
+    ports:
+      - "${PORT:-3000}:3000"
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('node:http').get('http://127.0.0.1:3000/health/live',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    stop_grace_period: 30s

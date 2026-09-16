@@ -1,0 +1,32 @@
+/// 用户表
+model User {
+  /// 用户ID，UUID 主键
+  id                  String               @id @default(uuid()) @db.VarChar(36)
+  /// 用户名，全局唯一，用于登录
+  username            String               @unique(map: "user_username_key")
+  /// 密码的 bcrypt 哈希值（不存明文）
+  password            String
+  /// 邮箱，可选，全局唯一
+  email               String?              @unique(map: "user_email_key")
+  /// 系统角色ID
+  systemRoleId        String               @map("system_role_id") @db.VarChar(36)
+  /// 连续登录失败次数，登录成功或触发锁定后清零
+  failedLoginAttempts Int                  @default(0) @map("failed_login_attempts")
+  /// 锁定截止时间，晚于当前时间表示账户被锁定（连续登录失败触发），到期自动解锁
+  lockedUntil         DateTime?            @map("locked_until")
+  /// 管理员禁止登录。为 true 时拒绝登录，并使已有会话立即失效
+  disabled            Boolean              @default(false)
+  /// 创建时间
+  createdTime         DateTime             @default(now()) @map("create_time")
+  /// 更新时间
+  updatedTime         DateTime             @updatedAt @map("update_time")
+  /// 该用户的登录会话列表
+  sessions            AuthSession[]
+  /// 用户获授的业务角色
+  businessRoles       UserBusinessRole[]
+  /// 所属系统角色
+  systemRole          SystemRole           @relation(fields: [systemRoleId], references: [id], onDelete: Restrict)
+
+  @@index([systemRoleId], map: "user_system_role_id_idx")
+  @@map("user")
+}

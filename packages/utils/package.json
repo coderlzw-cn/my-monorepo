@@ -1,0 +1,17 @@
+{
+  "name": "@workspace/utils",
+  "version": "0.0.0",
+  "private": true,
+  "files": [
+    "browser/src",
+    "node/src",
+    "shared/src"
+  ],
+  "scripts": {
+    "check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "json5": "^2.2.3"
+  }
+}
