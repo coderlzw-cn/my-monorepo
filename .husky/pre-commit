@@ -1,1 +1,26 @@
 # pnpm exec lint-staged
+
+
+mkdir -p src/common/{interceptors,filters,guards,middleware,pipes,decorators,dtos} src/config src/database src/shared/{logger,redis} && \
+touch src/common/interceptors/transform.interceptor.ts \
+      src/common/interceptors/logging.interceptor.ts \
+      src/common/interceptors/timeout.interceptor.ts \
+      src/common/filters/all-exceptions.filter.ts \
+      src/common/filters/http-exception.filter.ts \
+      src/common/guards/jwt-auth.guard.ts \
+      src/common/guards/roles.guard.ts \
+      src/common/middleware/trace-id.middleware.ts \
+      src/common/middleware/logger.middleware.ts \
+      src/common/pipes/validation.pipe.ts \
+      src/common/decorators/current-user.decorator.ts \
+      src/common/decorators/roles.decorator.ts \
+      src/common/decorators/public.decorator.ts \
+      src/common/dtos/page-options.dto.ts \
+      src/common/dtos/page.dto.ts \
+      src/config/configuration.ts \
+      src/config/env-validation.ts \
+      src/database/database.module.ts \
+      src/shared/logger/logger.service.ts \
+      src/shared/logger/logger.module.ts \
+      src/shared/redis/redis.service.ts \
+      src/shared/redis/redis.module.ts

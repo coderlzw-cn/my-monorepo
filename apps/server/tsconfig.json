@@ -21,8 +21,8 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "@/*": ["./src/*"],
-      "@app/library": ["./libs/library/src"],
-      "@app/library/*": ["./libs/library/src/*"],
+      "@app/common": ["./libs/common/src"],
+      "@app/common/*": ["./libs/common/src/*"],
       "@workspace/common/*": ["../../packages/common/src/*"],
       "@workspace/utils/node/*": ["../../packages/utils/node/src/*"],
       "@workspace/utils/shared/*": ["../../packages/utils/shared/src/*"]

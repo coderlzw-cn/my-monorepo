@@ -100,6 +100,7 @@
     ],
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/$1",
+      "^@app/common(|/.*)$": "<rootDir>/libs/common/src/$1",
       "^@app/library(|/.*)$": "<rootDir>/libs/library/src/$1",
       "^@workspace/utils/(node|shared|browser)/(.*)$": "<rootDir>/../../../packages/utils/$1/src/$2"
     },
