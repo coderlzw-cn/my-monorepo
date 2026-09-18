@@ -6,7 +6,9 @@
   "license": "UNLICENSED",
   "author": "",
   "scripts": {
-    "dev:main": "nest start main --watch",
+    "dev:main": "NODE_ENV=development rspack dev",
+    "build": "NODE_ENV=production rspack build",
+    "start": "node dist/main.js",
     "format": "oxfmt .",
     "format:check": "oxfmt . --check",
     "lint": "oxlint src",
@@ -66,7 +68,9 @@
     "@nestjs/cli": "^12.0.1",
     "@nestjs/schematics": "^12.0.2",
     "@nestjs/testing": "^12.0.3",
+    "@rspack/cli": "^2.2.4",
     "@rspack/core": "^2.2.4",
+    "@rspack/dev-server": "^2.2.1",
     "@types/bcrypt": "^6.0.0",
     "@types/express": "^5.0.6",
     "@types/jest": "^30.0.0",
@@ -75,7 +79,6 @@
     "@types/passport-jwt": "^4.0.1",
     "@types/passport-local": "^1.0.38",
     "@types/supertest": "^7.2.1",
-    "fork-ts-checker-webpack-plugin": "^9.1.0",
     "jest": "^30.5.1",
     "prisma": "^8.0.0-rc.15",
     "source-map-support": "^0.5.21",
@@ -83,10 +86,7 @@
     "ts-jest": "^29.4.12",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "tsconfig-paths-webpack-plugin": "^4.2.0",
-    "typescript": "^6.0.3",
-    "vite-tsconfig-paths": "^6.1.1",
-    "webpack-node-externals": "^3.0.0"
+    "typescript": "^6.0.3"
   },
   "jest": {
     "collectCoverageFrom": [

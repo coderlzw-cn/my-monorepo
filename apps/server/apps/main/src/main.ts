@@ -1,7 +1,10 @@
+declare const module: { hot?: { accept: () => void; dispose: (callback: () => void) => void } };
+
 import { NestApplication, NestFactory } from "@nestjs/core";
 
 import { setupSwagger } from "@app/common/bootstrap";
 import { AppModule } from "./app.module";
+import { Logger } from "@nestjs/common";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestApplication>(AppModule, {
@@ -27,6 +30,15 @@ async function bootstrap() {
   await setupSwagger(app);
 
   await app.listen(process.env.PORT ?? 3000);
+
+  Logger.log(`Application is running on: ${await app.getUrl()}`, "Bootstrap");
+
+  if (module.hot) {
+    module.hot.accept();
+    module.hot.dispose(() => {
+      void app.close();
+    });
+  }
 }
 
 void bootstrap();

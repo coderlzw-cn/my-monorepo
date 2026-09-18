@@ -4,7 +4,6 @@
   "sourceRoot": "apps/main/src",
   "compilerOptions": {
     "deleteOutDir": true,
-    "builder": "rspack",
     "tsConfigPath": "apps/main/tsconfig.app.json"
   },
   "projects": {
