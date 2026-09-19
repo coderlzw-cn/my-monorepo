@@ -20,11 +20,20 @@ interface Range {
 type RangeValue = [number, number];
 
 function getIsValidRange(value: unknown): value is RangeValue {
-  return Array.isArray(value) && value.length === 2 && typeof value[0] === "number" && typeof value[1] === "number";
+  return (
+    Array.isArray(value) &&
+    value.length === 2 &&
+    typeof value[0] === "number" &&
+    typeof value[1] === "number"
+  );
 }
 
 function parseValuesAsNumbers(value: unknown): RangeValue | undefined {
-  if (Array.isArray(value) && value.length === 2 && value.every((v) => (typeof v === "string" || typeof v === "number") && !Number.isNaN(v))) {
+  if (
+    Array.isArray(value) &&
+    value.length === 2 &&
+    value.every((v) => (typeof v === "string" || typeof v === "number") && !Number.isNaN(v))
+  ) {
     return [Number(value[0]), Number(value[1])];
   }
 
@@ -37,7 +46,10 @@ interface DataTableSliderFilterProps<TData extends RowData> {
 }
 
 /** 数值范围筛选器；优先使用列 meta.range，否则从 faceted min/max API 推导边界。 */
-export function DataTableSliderFilter<TData extends RowData>({ column, title }: DataTableSliderFilterProps<TData>) {
+export function DataTableSliderFilter<TData extends RowData>({
+  column,
+  title,
+}: DataTableSliderFilterProps<TData>) {
   const id = React.useId();
 
   const columnFilterValue = parseValuesAsNumbers(column.getFilterValue());
@@ -63,7 +75,12 @@ export function DataTableSliderFilter<TData extends RowData>({ column, title }: 
     }
 
     const rangeSize = maxValue - minValue;
-    const step = rangeSize <= 20 ? 1 : rangeSize <= 100 ? Math.ceil(rangeSize / 20) : Math.ceil(rangeSize / 50);
+    const step =
+      rangeSize <= 20
+        ? 1
+        : rangeSize <= 100
+          ? Math.ceil(rangeSize / 20)
+          : Math.ceil(rangeSize / 50);
 
     return { min: minValue, max: maxValue, step };
   }, [column, defaultRange]);
@@ -135,7 +152,10 @@ export function DataTableSliderFilter<TData extends RowData>({ column, title }: 
           <span>{title}</span>
           {columnFilterValue ? (
             <>
-              <Separator orientation="vertical" className="mx-0.5 data-[orientation=vertical]:h-4" />
+              <Separator
+                orientation="vertical"
+                className="mx-0.5 data-[orientation=vertical]:h-4"
+              />
               {formatValue(columnFilterValue[0])} - {formatValue(columnFilterValue[1])}
               {unit ? ` ${unit}` : ""}
             </>
@@ -144,7 +164,9 @@ export function DataTableSliderFilter<TData extends RowData>({ column, title }: 
       </PopoverTrigger>
       <PopoverContent align="start" className="flex w-auto flex-col gap-4">
         <div className="flex flex-col gap-3">
-          <p className="leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">{title}</p>
+          <p className="leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+            {title}
+          </p>
           <div className="flex items-center gap-4">
             <Label htmlFor={`${id}-from`} className="sr-only">
               起始
@@ -164,7 +186,11 @@ export function DataTableSliderFilter<TData extends RowData>({ column, title }: 
                 onChange={onFromInputChange}
                 className={cn("h-8 w-24", unit && "pr-8")}
               />
-              {unit && <span className="absolute inset-y-0 right-0 flex items-center rounded-r-md bg-accent px-2 text-sm text-muted-foreground">{unit}</span>}
+              {unit && (
+                <span className="absolute inset-y-0 right-0 flex items-center rounded-r-md bg-accent px-2 text-sm text-muted-foreground">
+                  {unit}
+                </span>
+              )}
             </div>
             <Label htmlFor={`${id}-to`} className="sr-only">
               结束
@@ -184,13 +210,24 @@ export function DataTableSliderFilter<TData extends RowData>({ column, title }: 
                 onChange={onToInputChange}
                 className={cn("h-8 w-24", unit && "pr-8")}
               />
-              {unit && <span className="absolute inset-y-0 right-0 flex items-center rounded-r-md bg-accent px-2 text-sm text-muted-foreground">{unit}</span>}
+              {unit && (
+                <span className="absolute inset-y-0 right-0 flex items-center rounded-r-md bg-accent px-2 text-sm text-muted-foreground">
+                  {unit}
+                </span>
+              )}
             </div>
           </div>
           <Label htmlFor={`${id}-slider`} className="sr-only">
             {title} slider
           </Label>
-          <Slider id={`${id}-slider`} min={min} max={max} step={step} value={range} onValueChange={onSliderValueChange} />
+          <Slider
+            id={`${id}-slider`}
+            min={min}
+            max={max}
+            step={step}
+            value={range}
+            onValueChange={onSliderValueChange}
+          />
         </div>
         <Button aria-label={`Clear ${title} filter`} variant="outline" onClick={onReset}>
           清除

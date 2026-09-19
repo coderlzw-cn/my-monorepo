@@ -1,7 +1,13 @@
 import { cn } from "cn";
 import React from "react";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "../shadcn/breadcrumb";
-
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "../shadcn/breadcrumb";
 
 export interface BreadcrumbTrailItem {
   href?: string;
@@ -11,7 +17,6 @@ interface BreadcrumbTrailProps extends Omit<React.ComponentProps<typeof Breadcru
   items: BreadcrumbTrailItem[];
   renderLink?: (item: BreadcrumbTrailItem) => React.ReactNode;
 }
-
 
 function BreadcrumbTrail({ className, items, renderLink, ...props }: BreadcrumbTrailProps) {
   if (items.length === 0) return null;
@@ -28,7 +33,11 @@ function BreadcrumbTrail({ className, items, renderLink, ...props }: BreadcrumbT
                 {current ? (
                   <BreadcrumbPage className="truncate">{item.label}</BreadcrumbPage>
                 ) : item.href ? (
-                  <BreadcrumbLink asChild={Boolean(renderLink)} className="truncate" href={renderLink ? undefined : item.href}>
+                  <BreadcrumbLink
+                    asChild={Boolean(renderLink)}
+                    className="truncate"
+                    href={renderLink ? undefined : item.href}
+                  >
                     {renderLink ? renderLink(item) : item.label}
                   </BreadcrumbLink>
                 ) : (
@@ -43,4 +52,4 @@ function BreadcrumbTrail({ className, items, renderLink, ...props }: BreadcrumbT
   );
 }
 
-export {BreadcrumbTrail}
+export { BreadcrumbTrail };

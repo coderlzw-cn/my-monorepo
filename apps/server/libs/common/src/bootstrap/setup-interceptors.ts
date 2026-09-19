@@ -2,15 +2,15 @@ import { INestApplication } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { LoggingInterceptor, LoggingInterceptorConfig } from "../interceptors/logging.interceptor";
 import { TimeoutInterceptor, TimeoutInterceptorConfig } from "../interceptors/timeout.interceptor";
-import { TransformInterceptor, TransformInterceptorConfig } from "../interceptors/transform.interceptor";
+import { TransformInterceptor } from "../interceptors/transform.interceptor";
 
 /**
  * 拦截器组装配配置接口
  * 支持对各个拦截器传入 `boolean`（开关）或具体的 `Options` 配置对象
  */
 export interface InterceptorSetupOptions {
-  /** 统一响应格式化拦截器配置（默认开启） */
-  transform?: TransformInterceptorConfig;
+  /** 统一响应格式化拦截器（默认开启，无额外配置） */
+  transform?: boolean;
 
   /** Controller 切面日志与耗时统计拦截器配置（默认开启） */
   logging?: LoggingInterceptorConfig;
@@ -32,10 +32,10 @@ export interface InterceptorSetupOptions {
 export function setupInterceptors(app: INestApplication, options: InterceptorSetupOptions = {}): void {
   const { transform = true, logging = true, timeout = true } = options;
 
-  // 1. 装配统一响应格式化拦截器
-  const transformOpts = TransformInterceptor.resolveOptions(transform);
-  if (transformOpts) {
-    app.useGlobalInterceptors(new TransformInterceptor(transformOpts));
+  // 1. 装配统一响应格式化拦截器（注入 Reflector，用于读取 @SkipTransform 等元数据）
+  if (transform) {
+    const reflector = app.get(Reflector);
+    app.useGlobalInterceptors(new TransformInterceptor(reflector));
   }
 
   // 2. 装配 Controller 切面日志与耗时拦截器

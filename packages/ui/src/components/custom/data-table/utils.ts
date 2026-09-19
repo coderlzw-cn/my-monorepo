@@ -9,13 +9,25 @@ import type { DataTableColumn, ExtendedColumnFilter, FilterOperator, FilterVaria
  *
  * 应同时应用到同一列的表头和单元格，避免横向滚动时宽度或层级错位。
  */
-export function getColumnPinningStyle<TData extends RowData>({ column, withBorder = false }: { column: DataTableColumn<TData>; withBorder?: boolean }): React.CSSProperties {
+export function getColumnPinningStyle<TData extends RowData>({
+  column,
+  withBorder = false,
+}: {
+  column: DataTableColumn<TData>;
+  withBorder?: boolean;
+}): React.CSSProperties {
   const isPinned = column.getIsPinned();
   const isLastStartPinnedColumn = isPinned === "start" && column.getIsLastColumn("start");
   const isFirstEndPinnedColumn = isPinned === "end" && column.getIsFirstColumn("end");
 
   return {
-    boxShadow: withBorder ? (isLastStartPinnedColumn ? "-4px 0 4px -4px var(--border) inset" : isFirstEndPinnedColumn ? "4px 0 4px -4px var(--border) inset" : undefined) : undefined,
+    boxShadow: withBorder
+      ? isLastStartPinnedColumn
+        ? "-4px 0 4px -4px var(--border) inset"
+        : isFirstEndPinnedColumn
+          ? "4px 0 4px -4px var(--border) inset"
+          : undefined
+      : undefined,
     insetInlineStart: isPinned === "start" ? `${column.getStart("start")}px` : undefined,
     insetInlineEnd: isPinned === "end" ? `${column.getAfter("end")}px` : undefined,
     opacity: isPinned ? 0.97 : 1,
@@ -52,11 +64,15 @@ export function getDefaultFilterOperator(filterVariant: FilterVariant) {
 /**
  * 移除没有实际值的筛选条件；`isEmpty` 和 `isNotEmpty` 不需要值，因此始终保留。
  */
-export function getValidFilters<TData>(filters: ExtendedColumnFilter<TData>[]): ExtendedColumnFilter<TData>[] {
+export function getValidFilters<TData>(
+  filters: ExtendedColumnFilter<TData>[],
+): ExtendedColumnFilter<TData>[] {
   return filters.filter(
     (filter) =>
       filter.operator === "isEmpty" ||
       filter.operator === "isNotEmpty" ||
-      (Array.isArray(filter.value) ? filter.value.length > 0 : filter.value !== "" && filter.value !== null && filter.value !== undefined),
+      (Array.isArray(filter.value)
+        ? filter.value.length > 0
+        : filter.value !== "" && filter.value !== null && filter.value !== undefined),
   );
 }

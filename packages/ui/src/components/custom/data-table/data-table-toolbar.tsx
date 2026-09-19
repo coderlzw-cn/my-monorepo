@@ -11,7 +11,11 @@ import { DataTableViewOptions } from "./data-table-view-options";
 import type { DataTableColumn, DataTableInstance } from "./types";
 import { Button } from "@workspace/ui/components/shadcn/button";
 import { Input } from "@workspace/ui/components/shadcn/input";
-import { InputGroup, InputGroupAddon, InputGroupInput } from "@workspace/ui/components/shadcn/input-group";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@workspace/ui/components/shadcn/input-group";
 import { cn } from "@workspace/ui/lib/utils";
 
 interface DataTableToolbarProps<TData extends RowData> extends React.ComponentProps<"div"> {
@@ -22,24 +26,46 @@ interface DataTableToolbarProps<TData extends RowData> extends React.ComponentPr
  * 根据列 `meta.variant` 自动选择文本、数值、日期或分面筛选器。
  * 筛选状态直接读写 `table.state.columnFilters`，调用方无需重复传入状态快照。
  */
-export function DataTableToolbar<TData extends RowData>({ table, children, className, ...props }: DataTableToolbarProps<TData>) {
+export function DataTableToolbar<TData extends RowData>({
+  table,
+  children,
+  className,
+  ...props
+}: DataTableToolbarProps<TData>) {
   const filters = table.state.columnFilters;
   const isFiltered = filters.length > 0;
 
-  const columns = React.useMemo(() => table.getAllColumns().filter((column) => column.getCanFilter()), [table]);
+  const columns = React.useMemo(
+    () => table.getAllColumns().filter((column) => column.getCanFilter()),
+    [table],
+  );
 
   const onReset = React.useCallback(() => {
     table.resetColumnFilters();
   }, [table]);
 
   return (
-    <div role="toolbar" aria-orientation="horizontal" className={cn("flex w-full items-start justify-between gap-2 p-1", className)} {...props}>
+    <div
+      role="toolbar"
+      aria-orientation="horizontal"
+      className={cn("flex w-full items-start justify-between gap-2 p-1", className)}
+      {...props}
+    >
       <div className="flex flex-1 flex-wrap items-center gap-2">
         {columns.map((column) => (
-          <DataTableToolbarFilter key={column.id} column={column} filterValue={filters.find((item) => item.id === column.id)?.value} />
+          <DataTableToolbarFilter
+            key={column.id}
+            column={column}
+            filterValue={filters.find((item) => item.id === column.id)?.value}
+          />
         ))}
         {isFiltered && (
-          <Button aria-label="重置筛选" variant="outline" className="border-dashed" onClick={onReset}>
+          <Button
+            aria-label="重置筛选"
+            variant="outline"
+            className="border-dashed"
+            onClick={onReset}
+          >
             <RiCloseLine />
             重置
           </Button>
@@ -57,13 +83,22 @@ interface DataTableToolbarFilterProps<TData extends RowData> {
   filterValue: unknown;
 }
 
-function DataTableToolbarFilter<TData extends RowData>({ column, filterValue }: DataTableToolbarFilterProps<TData>) {
+function DataTableToolbarFilter<TData extends RowData>({
+  column,
+  filterValue,
+}: DataTableToolbarFilterProps<TData>) {
   const columnMeta = column.columnDef.meta;
   if (!columnMeta?.variant) return null;
 
   switch (columnMeta.variant) {
     case "text":
-      return <DataTableTextFilter column={column} filterValue={filterValue} placeholder={columnMeta.placeholder ?? columnMeta.label} />;
+      return (
+        <DataTableTextFilter
+          column={column}
+          filterValue={filterValue}
+          placeholder={columnMeta.placeholder ?? columnMeta.label}
+        />
+      );
 
     case "number":
       return (
@@ -76,7 +111,11 @@ function DataTableToolbarFilter<TData extends RowData>({ column, filterValue }: 
             onChange={(event) => column.setFilterValue(event.target.value)}
             className={cn("h-8 w-30", columnMeta.unit && "pr-8")}
           />
-          {columnMeta.unit && <span className="absolute inset-y-0 right-0 flex items-center rounded-r-md bg-accent px-2 text-sm text-muted-foreground">{columnMeta.unit}</span>}
+          {columnMeta.unit && (
+            <span className="absolute inset-y-0 right-0 flex items-center rounded-r-md bg-accent px-2 text-sm text-muted-foreground">
+              {columnMeta.unit}
+            </span>
+          )}
         </div>
       );
 
@@ -85,12 +124,24 @@ function DataTableToolbarFilter<TData extends RowData>({ column, filterValue }: 
 
     case "date":
     case "dateRange":
-      return <DataTableDateFilter column={column} title={columnMeta.label ?? column.id} multiple={columnMeta.variant === "dateRange"} />;
+      return (
+        <DataTableDateFilter
+          column={column}
+          title={columnMeta.label ?? column.id}
+          multiple={columnMeta.variant === "dateRange"}
+        />
+      );
 
     case "select":
     case "multiSelect":
       return (
-        <DataTableFacetedFilter column={column} filterValue={filterValue} title={columnMeta.label ?? column.id} options={columnMeta.options ?? []} multiple={columnMeta.variant === "multiSelect"} />
+        <DataTableFacetedFilter
+          column={column}
+          filterValue={filterValue}
+          title={columnMeta.label ?? column.id}
+          options={columnMeta.options ?? []}
+          multiple={columnMeta.variant === "multiSelect"}
+        />
       );
 
     default:
@@ -110,7 +161,11 @@ interface DataTableTextFilterProps<TData extends RowData> {
  * 文本筛选使用本地输入状态，避免每次按键都触发服务端请求。
  * 中文输入法在组合阶段会产生未确认的拼音，因此仅在 compositionend 后开始防抖。
  */
-function DataTableTextFilter<TData extends RowData>({ column, filterValue, placeholder }: DataTableTextFilterProps<TData>) {
+function DataTableTextFilter<TData extends RowData>({
+  column,
+  filterValue,
+  placeholder,
+}: DataTableTextFilterProps<TData>) {
   const externalValue = typeof filterValue === "string" ? filterValue : "";
   const [inputValue, setInputValue] = React.useState(externalValue);
   const isComposingRef = React.useRef(false);

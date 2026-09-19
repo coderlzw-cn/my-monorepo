@@ -1,134 +1,182 @@
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from "@nestjs/common";
-import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
-import { traceStore } from "../middleware/trace-id.middleware";
+import { CallHandler, ExecutionContext, HttpStatus, Injectable, NestInterceptor, StreamableFile } from "@nestjs/common";
+import { HTTP_CODE_METADATA, REDIRECT_METADATA, SSE_METADATA } from "@nestjs/common/constants";
+import { Reflector } from "@nestjs/core";
+import { map, Observable } from "rxjs";
+import { SKIP_TRANSFORM_KEY } from "../decorators/skip-transform.decorator";
 
-/**
- * 企业级统一响应结构接口
- */
 export interface ApiResponse<T = unknown> {
-  /** 业务状态码，通常 0 表示成功 */
-  code: number;
-  /** 响应提示信息 */
   message: string;
-  /** 核心业务响应数据 */
-  data: T;
-  /** 全链路追踪 Trace ID */
-  traceId: string;
-  /** 服务器响应时间戳（单位：毫秒） */
-  timestamp: number;
+  code?: number;
+  data?: T;
 }
 
-/**
- * TransformInterceptor 配置项接口
- */
-export interface TransformInterceptorOptions {
-  /**
-   * 默认成功业务状态码
-   * @default 0
-   */
-  successCode?: number;
+export class ResponseResult<T = void> {
+  private constructor(
+    private message: string,
+    private code?: number,
+    private data?: T,
+  ) {}
 
   /**
-   * 默认成功提示信息
-   * @default 'Success'
+   * 1. 纯消息响应：{ message: "..." }
    */
-  successMessage?: string;
+  static msg(message: string): ResponseResult<void> {
+    return new ResponseResult<void>(message);
+  }
 
   /**
-   * 需要跳过包装的 Response Content-Type 列表（如文件下载、流传输等）
-   * @default ['application/octet-stream', 'image/', 'text/event-stream']
+   * 2. 成功响应
+   * - ResponseResult.success('更新成功') -> { message: "更新成功", code: 200 }
+   * - ResponseResult.success(data, '更新成功') -> { message: "更新成功", code: 200, data: xxxxx }
    */
-  ignoreContentTypes?: string[];
+  static success(): ResponseResult<void>;
+  static success(message: string, code?: number): ResponseResult<void>;
+  static success<D>(data: D, message?: string, code?: number): ResponseResult<D>;
+  static success<D>(dataOrMessage?: D | string, messageOrCode?: string | number, code = 200): ResponseResult<unknown> {
+    // 情况 A：仅传字符串 message，例如 success('更新成功')
+    if (typeof dataOrMessage === "string") {
+      const customCode = typeof messageOrCode === "number" ? messageOrCode : 200;
+      return new ResponseResult<void>(dataOrMessage, customCode);
+    }
+
+    // 情况 B：没传参，例如 success()
+    if (dataOrMessage === undefined) {
+      return new ResponseResult<void>("请求成功", 200);
+    }
+
+    // 情况 C：传了 data，例如 success(data, '更新成功')
+    const msg = typeof messageOrCode === "string" ? messageOrCode : "请求成功";
+    return new ResponseResult<D>(msg, code, dataOrMessage);
+  }
+
+  /**
+   * 3. 失败/自定义状态码响应
+   * - ResponseResult.fail('更新失败', 3001) -> { message: "更新失败", code: 3001 }
+   */
+  static fail(message?: string, code = 400): ResponseResult<void> {
+    return new ResponseResult<void>(message ?? "操作失败", code);
+  }
+
+  /**
+   * 链式设置 code
+   */
+  setCode(code: number): this {
+    this.code = code;
+    return this;
+  }
+
+  /**
+   * 链式注入 data
+   */
+  with<D>(data: D): ResponseResult<D> {
+    return new ResponseResult<D>(this.message, this.code, data);
+  }
+
+  /**
+   * 序列化钩子：自动清理未设值的字段
+   */
+  toJSON(): ApiResponse<T> {
+    const result: ApiResponse<T> = { message: this.message };
+
+    if (this.code !== undefined && this.code !== null) {
+      result.code = this.code;
+    }
+
+    if (this.data !== undefined && this.data !== null) {
+      result.data = this.data;
+    }
+
+    return result;
+  }
 }
 
-/**
- * 支持传入布尔值（开关）或配置对象
- */
-export type TransformInterceptorConfig = boolean | TransformInterceptorOptions;
-
-/**
- * 默认配置常量
- */
-const DEFAULT_TRANSFORM_OPTIONS: TransformInterceptorOptions = {
-  successCode: 0,
-  successMessage: "Success",
-  ignoreContentTypes: ["application/octet-stream", "image/", "text/event-stream"],
-};
-
-/**
- * 全局统一响应格式化拦截器 (TransformInterceptor)
- *
- * 核心功能：
- * 1. 拦截 Controller 返回数据，统一包装为 `ApiResponse<T>` 标准 JSON 格式。
- * 2. 从 AsyncLocalStorage (`traceStore`) 自动注入当前请求的全链路 Trace ID。
- * 3. 智能判断并跳过已经具备标准结构的响应、Buffer、Stream 流及指定 Content-Type 的文件下载接口。
- */
 @Injectable()
-export class TransformInterceptor<T> implements NestInterceptor<T, ApiResponse<T> | T> {
-  private readonly successCode: number;
-  private readonly successMessage: string;
-  private readonly ignoreContentTypes: string[];
+export class TransformInterceptor implements NestInterceptor<unknown, unknown> {
+  constructor(private readonly reflector: Reflector) {}
 
-  constructor(options: TransformInterceptorOptions = DEFAULT_TRANSFORM_OPTIONS) {
-    this.successCode = options.successCode ?? DEFAULT_TRANSFORM_OPTIONS.successCode!;
-    this.successMessage = options.successMessage || DEFAULT_TRANSFORM_OPTIONS.successMessage!;
-    this.ignoreContentTypes = options.ignoreContentTypes || DEFAULT_TRANSFORM_OPTIONS.ignoreContentTypes!;
-  }
-
-  /**
-   * 静态配置解析函数：用于 setupInterceptors 中处理 boolean | Options 配置项
-   */
-  static resolveOptions(config?: TransformInterceptorConfig): TransformInterceptorOptions | null {
-    if (config === false) return null;
-    if (config === true || config === undefined) return DEFAULT_TRANSFORM_OPTIONS;
-    return { ...DEFAULT_TRANSFORM_OPTIONS, ...config };
-  }
-
-  intercept(context: ExecutionContext, next: CallHandler<T>): Observable<ApiResponse<T> | T> {
-    // 非 HTTP 请求（如 RPC、WebSocket）跳过响应包装
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     if (context.getType() !== "http") {
       return next.handle();
     }
 
-    const httpContext = context.switchToHttp();
-    const response = httpContext.getResponse();
+    const handler = context.getHandler();
+    const controller = context.getClass();
 
-    return next.handle().pipe(
-      map((data) => {
-        // 1. 如果响应已经被写入/结束（例如在 Handler 中手写了 res.send/res.download），跳过包装
-        if (response.headersSent) {
-          return data;
+    // 显式声明不包装（文件下载约定、特殊 JSON 等）
+    if (this.reflector.getAllAndOverride<boolean>(SKIP_TRANSFORM_KEY, [handler, controller])) {
+      return next.handle();
+    }
+
+    // SSE：响应为长连接事件流，不能包一层 JSON
+    if (this.reflector.get<boolean>(SSE_METADATA, handler)) {
+      return next.handle();
+    }
+
+    // 重定向：框架会写 Location/status，包装会破坏语义
+    if (this.reflector.get<{ statusCode?: number; url?: string } | undefined>(REDIRECT_METADATA, handler)) {
+      return next.handle();
+    }
+
+    const httpCode = this.reflector.getAllAndOverride<number>(HTTP_CODE_METADATA, [handler, controller]) ?? HttpStatus.OK;
+
+    return next.handle().pipe(map((data: unknown) => this.toEnvelope(data, httpCode)));
+  }
+
+  /**
+   * 将控制器返回值转为统一外壳。
+   */
+  private toEnvelope(data: unknown, httpCode: number): ApiResponse<unknown> | StreamableFile | Buffer {
+    // 1. 流式文件与 Buffer 原样返回
+    if (data instanceof StreamableFile || Buffer.isBuffer(data)) {
+      return data;
+    }
+
+    // 2. 如果控制器直接返回了 ResponseResult 实例，直接调用其 toJSON()
+    if (data instanceof ResponseResult) {
+      return data.toJSON();
+    }
+
+    // 3. 处理普通对象情况
+    if (typeof data === "object" && data !== null) {
+      const record = data as Record<string, unknown>;
+      const keys = Object.keys(record);
+      const hasOwnMessage = Object.hasOwn(record, "message");
+      const message = typeof record.message === "string" && record.message.length > 0 ? record.message : "请求成功";
+
+      // 3.1 兼容 controller 返回纯 { message: "更新成功" }
+      if (hasOwnMessage && keys.length === 1) {
+        return { message };
+      }
+
+      // 3.2 兼容 controller 返回 { message: "更新成功", code: 200 }
+      const isMessageWithCode = hasOwnMessage && Object.hasOwn(record, "code") && keys.length === 2;
+      if (isMessageWithCode) {
+        return { message, code: record.code as number };
+      }
+
+      // 3.3 兼容 controller 返回 { message: "...", data: ... } 或 { message: "...", code: ..., data: ... }
+      const isMessageWithData = hasOwnMessage && Object.hasOwn(record, "data");
+      if (isMessageWithData) {
+        const result: ApiResponse<unknown> = { message };
+        if (Object.hasOwn(record, "code")) {
+          result.code = record.code as number;
+        } else {
+          result.code = httpCode;
         }
-
-        // 2. 判断 Response Content-Type 是否在忽略白名单中（如文件下载、SSE 实时流）
-        const contentType = (response.getHeader("content-type") as string) || "";
-        if (contentType && this.ignoreContentTypes.some((type) => contentType.includes(type))) {
-          return data;
+        if (record.data !== undefined && record.data !== null) {
+          result.data = record.data;
         }
+        return result;
+      }
+    }
 
-        // 3. 特殊数据类型跳过包装：Buffer 或 Stream 实例
-        if (Buffer.isBuffer(data) || (data && typeof (data as unknown as { pipe: unknown }).pipe === "function")) {
-          return data;
-        }
+    // 4. 其它未手动包装的普通返回值（如字符串、数组、标准 DTO），自动补充默认格式
+    const result: ApiResponse<unknown> = { code: httpCode, message: "请求成功" };
 
-        // 4. 如果已经符合 ApiResponse 结构（包含 code/data/traceId），避免二次包装
-        if (data && typeof data === "object" && "code" in data && "data" in data && "traceId" in data) {
-          return data;
-        }
+    if (data !== undefined && data !== null) {
+      result.data = data;
+    }
 
-        // 5. 从 AsyncLocalStorage 隐式获取当前请求的 Trace ID
-        const traceId = traceStore.getStore() || "N/A";
-
-        // 6. 构造标准 API 响应对象
-        return {
-          code: this.successCode,
-          message: this.successMessage,
-          data: data ?? null,
-          traceId,
-          timestamp: Date.now(),
-        } as ApiResponse<T>;
-      }),
-    );
+    return result;
   }
 }

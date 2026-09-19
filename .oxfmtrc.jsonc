@@ -1,11 +1,10 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
   "printWidth": 200,
- "overrides": [
+  "overrides": [
     {
       "files": ["apps/**/*"],
-      "options": {
-      },
+      "options": {},
     },
   ],
 }

@@ -11,13 +11,25 @@ interface DataTablePaginationProps<TData extends RowData> extends React.Componen
 }
 
 /** 将 TanStack Table 的分页状态适配到 UI 包的通用 Pagination 组件。 */
-export function DataTablePagination<TData extends RowData>({ table, pageSizeOptions = [10, 20, 30, 40, 50], className, ...props }: DataTablePaginationProps<TData>) {
+export function DataTablePagination<TData extends RowData>({
+  table,
+  pageSizeOptions = [10, 20, 30, 40, 50],
+  className,
+  ...props
+}: DataTablePaginationProps<TData>) {
   const { pageIndex, pageSize } = table.state.pagination;
 
   return (
-    <div className={cn("flex w-full flex-col gap-4 overflow-auto p-1 sm:flex-row sm:items-center sm:justify-between sm:gap-8", className)} {...props}>
+    <div
+      className={cn(
+        "flex w-full flex-col gap-4 overflow-auto p-1 sm:flex-row sm:items-center sm:justify-between sm:gap-8",
+        className,
+      )}
+      {...props}
+    >
       <div className="flex-1 text-sm whitespace-nowrap text-muted-foreground">
-        已选 {table.getFilteredSelectedRowModel().rows.length} / {table.getFilteredRowModel().rows.length} 行
+        已选 {table.getFilteredSelectedRowModel().rows.length} /{" "}
+        {table.getFilteredRowModel().rows.length} 行
       </div>
       <Pagination
         className="shrink-0"

@@ -1,7 +1,6 @@
 {
   "$schema": "../../node_modules/oxfmt/configuration_schema.json",
   "extends": ["../../.oxfmtrc.jsonc"],
-  "printWidth": 200,
   "experimentalTailwindcss": {
     "stylesheet": "./src/styles/globals.css",
     "functions": ["cn", "cva"],

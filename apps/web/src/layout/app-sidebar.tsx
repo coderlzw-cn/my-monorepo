@@ -179,7 +179,6 @@ function SidebarCollapseButton() {
 export function AppSidebar() {
   const [sidebarWidth, setSidebarWidthState] = useState(DEFAULT_SIDEBAR_WIDTH);
 
-
   const profile = useAuthStore((state) => state.profile);
 
   // 根据路由配置和当前用户角色生成有权限访问的导航菜单。

@@ -8,7 +8,7 @@
     "perf": "warn",
   },
   "rules": {
-        "import/no-named-as-default-member": "off",
+    "import/no-named-as-default-member": "off",
     // 样式、polyfill、reflect-metadata 等副作用导入是合法用法
     "import/no-unassigned-import": "off",
     // 允许保留用于后续实现的空占位文件

@@ -111,20 +111,7 @@ export interface PublicErrorFallback {
   readonly statusCode?: number;
 }
 
-const DEFAULT_SENSITIVE_KEYS = [
-  "password",
-  "passwd",
-  "secret",
-  "clientsecret",
-  "token",
-  "accesstoken",
-  "refreshtoken",
-  "authorization",
-  "cookie",
-  "setcookie",
-  "apikey",
-  "privatekey",
-] as const;
+const DEFAULT_SENSITIVE_KEYS = ["password", "passwd", "secret", "clientsecret", "token", "accesstoken", "refreshtoken", "authorization", "cookie", "setcookie", "apikey", "privatekey"] as const;
 
 /**
  * 带稳定错误码、因果链和安全公开策略的业务错误。
@@ -533,7 +520,7 @@ function sanitizeErrorValue(value: unknown, options: ResolvedSerializeErrorOptio
 
   seen.add(value);
   if (Array.isArray(value)) {
-    return value.map(item => sanitizeErrorValue(item, options, depth + 1, seen));
+    return value.map((item) => sanitizeErrorValue(item, options, depth + 1, seen));
   }
 
   const result: Record<string, ErrorJsonValue> = {};

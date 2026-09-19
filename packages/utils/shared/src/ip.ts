@@ -25,7 +25,7 @@ export function isIPv4(ip?: string | null): boolean {
     return false;
   }
 
-  return parts.every(part => {
+  return parts.every((part) => {
     if (!/^\d+$/.test(part)) {
       return false;
     }
@@ -152,14 +152,14 @@ export function expandIpv6(ip: string): string | undefined {
   /*
    * 每组必须为 1~4 位十六进制
    */
-  if (!groups.every(group => /^[0-9a-f]{1,4}$/i.test(group))) {
+  if (!groups.every((group) => /^[0-9a-f]{1,4}$/i.test(group))) {
     return undefined;
   }
 
   /*
    * 去除每组前导 0
    */
-  return groups.map(group => parseInt(group, 16).toString(16)).join(":");
+  return groups.map((group) => parseInt(group, 16).toString(16)).join(":");
 }
 
 /**
@@ -306,7 +306,7 @@ export function parseForwardedFor(ips?: string | string[] | null): string[] {
 
   return raw
     .split(",")
-    .map(item => normalizeIp(item))
+    .map((item) => normalizeIp(item))
     .filter((item): item is string => item !== undefined);
 }
 
@@ -422,7 +422,7 @@ export function longToIpv4(value: number): string | undefined {
     return undefined;
   }
 
-  return [24, 16, 8, 0].map(shift => (value >>> shift) & 0xff).join(".");
+  return [24, 16, 8, 0].map((shift) => (value >>> shift) & 0xff).join(".");
 }
 
 /**
@@ -447,7 +447,7 @@ export function ipv6ToBigInt(ip?: string | null): bigint | undefined {
 
   const hex = expanded
     .split(":")
-    .map(group => group.padStart(4, "0"))
+    .map((group) => group.padStart(4, "0"))
     .join("");
 
   return BigInt(`0x${hex}`);
@@ -736,7 +736,7 @@ export function createIpMatcher(rules: string[]): (ip?: string | null) => boolea
       return false;
     }
 
-    return parsedRules.some(rule => {
+    return parsedRules.some((rule) => {
       switch (rule.type) {
         case "address":
           return normalized === rule.address;

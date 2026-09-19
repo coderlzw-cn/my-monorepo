@@ -8,8 +8,8 @@
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "lint": "oxlint apps packages tooling tests",
-    "fmt": "oxfmt . --disable-nested-config",
-    "fmt:check": "oxfmt . --check --disable-nested-config",
+    "format": "turbo run format",
+    "format:check": "turbo run format:check",
     "commit": "czg",
     "prepare": "husky"
   },
@@ -36,5 +36,6 @@
   },
   "engines": {
     "node": ">=24 <25"
-  }
+  },
+  "packageManager": "pnpm@12.4.2+sha512.08adc6613180275c7c9edada39dcf08c9c61ad4e7eaf330a4f3461f102b0f907423454d117f98e72d47fef0616070644d7bffc973a6a57f5090a6d7c368b07c9"
 }

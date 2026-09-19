@@ -9,7 +9,13 @@ import {
 
 import { Button } from "@workspace/ui/components/shadcn/button";
 import { Input } from "@workspace/ui/components/shadcn/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@workspace/ui/components/shadcn/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@workspace/ui/components/shadcn/select";
 import { usePagination } from "@workspace/ui/hooks/use-pagination";
 import { cn } from "@workspace/ui/lib/utils";
 
@@ -69,7 +75,11 @@ function getPageTokens(current: number, totalPages: number, showLessItems: boole
 
   if (!showLeftEllipsis && showRightEllipsis) {
     const leftItemCount = siblingCount * 2 + 3;
-    return [...Array.from({ length: leftItemCount }, (_, index) => index + 1), "jump-next", totalPages];
+    return [
+      ...Array.from({ length: leftItemCount }, (_, index) => index + 1),
+      "jump-next",
+      totalPages,
+    ];
   }
 
   if (showLeftEllipsis && !showRightEllipsis) {
@@ -78,7 +88,13 @@ function getPageTokens(current: number, totalPages: number, showLessItems: boole
     return [1, "jump-prev", ...Array.from({ length: rightItemCount }, (_, index) => start + index)];
   }
 
-  return [1, "jump-prev", ...Array.from({ length: rightSibling - leftSibling + 1 }, (_, index) => leftSibling + index), "jump-next", totalPages];
+  return [
+    1,
+    "jump-prev",
+    ...Array.from({ length: rightSibling - leftSibling + 1 }, (_, index) => leftSibling + index),
+    "jump-next",
+    totalPages,
+  ];
 }
 
 function Pagination({
@@ -134,7 +150,8 @@ function Pagination({
   const simpleReadOnly = typeof simple === "object" ? Boolean(simple.readOnly) : false;
 
   const iconSize = size === "large" ? "icon-lg" : size === "small" ? "icon-xs" : "icon-sm";
-  const controlHeightClass = size === "large" ? "h-10 text-sm" : size === "small" ? "h-6 text-xs" : "h-8 text-sm";
+  const controlHeightClass =
+    size === "large" ? "h-10 text-sm" : size === "small" ? "h-6 text-xs" : "h-8 text-sm";
   const selectSize = size === "large" ? "default" : "sm";
 
   const [simpleSource, setSimpleSource] = useState(page);
@@ -216,13 +233,22 @@ function Pagination({
         aria-label="分页"
         data-slot="pagination"
         data-simple=""
-        className={cn("flex flex-wrap items-center gap-2", alignClass[align], disabled && "pointer-events-none opacity-50", className)}
+        className={cn(
+          "flex flex-wrap items-center gap-2",
+          alignClass[align],
+          disabled && "pointer-events-none opacity-50",
+          className,
+        )}
       >
         {totalNode}
         {renderItem(page - 1, "prev", prevNode)}
-        <span className={cn("inline-flex items-center gap-1 text-muted-foreground", controlHeightClass)}>
+        <span
+          className={cn("inline-flex items-center gap-1 text-muted-foreground", controlHeightClass)}
+        >
           {simpleReadOnly ? (
-            <span className="min-w-6 text-center font-medium text-foreground tabular-nums">{page}</span>
+            <span className="min-w-6 text-center font-medium text-foreground tabular-nums">
+              {page}
+            </span>
           ) : (
             <Input
               type="text"
@@ -231,7 +257,7 @@ function Pagination({
               value={simpleValue}
               aria-label="页码"
               data-slot="pagination-jumper"
-              onChange={event => setSimpleValue(event.target.value)}
+              onChange={(event) => setSimpleValue(event.target.value)}
               onBlur={submitSimpleJump}
               onKeyDown={(event: KeyboardEvent<HTMLInputElement>) => {
                 if (event.key === "Enter") {
@@ -258,12 +284,17 @@ function Pagination({
       role="navigation"
       aria-label="分页"
       data-slot="pagination"
-      className={cn("flex flex-wrap items-center gap-2", alignClass[align], disabled && "pointer-events-none opacity-50", className)}
+      className={cn(
+        "flex flex-wrap items-center gap-2",
+        alignClass[align],
+        disabled && "pointer-events-none opacity-50",
+        className,
+      )}
     >
       {totalNode}
       {renderItem(page - 1, "prev", prevNode)}
 
-      {tokens.map(token => {
+      {tokens.map((token) => {
         if (token === "jump-prev" || token === "jump-next") {
           const isPrev = token === "jump-prev";
           const label = isPrev ? `向前 ${jumpStep} 页` : `向后 ${jumpStep} 页`;
@@ -288,7 +319,15 @@ function Pagination({
             </Button>
           );
 
-          return <span key={token}>{renderItem(isPrev ? Math.max(1, page - jumpStep) : Math.min(pageCount, page + jumpStep), token, node)}</span>;
+          return (
+            <span key={token}>
+              {renderItem(
+                isPrev ? Math.max(1, page - jumpStep) : Math.min(pageCount, page + jumpStep),
+                token,
+                node,
+              )}
+            </span>
+          );
         }
 
         const active = token === page;
@@ -318,15 +357,20 @@ function Pagination({
         <Select
           disabled={disabled}
           value={String(resolvedPageSize)}
-          onValueChange={value => {
+          onValueChange={(value) => {
             setPageSize(Number(value));
           }}
         >
-          <SelectTrigger size={selectSize} aria-label="每页条数" data-slot="pagination-size" className={cn("min-w-26", size === "small" && "h-6 text-xs")}>
+          <SelectTrigger
+            size={selectSize}
+            aria-label="每页条数"
+            data-slot="pagination-size"
+            className={cn("min-w-26", size === "small" && "h-6 text-xs")}
+          >
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {pageSizeOptions.map(option => (
+            {pageSizeOptions.map((option) => (
               <SelectItem key={option} value={String(option)}>
                 {`${option} 条/页`}
               </SelectItem>
@@ -336,7 +380,13 @@ function Pagination({
       ) : null}
 
       {showQuickJumper ? (
-        <form className={cn("inline-flex items-center gap-1.5 text-sm text-muted-foreground", controlHeightClass)} onSubmit={submitQuickJump}>
+        <form
+          className={cn(
+            "inline-flex items-center gap-1.5 text-sm text-muted-foreground",
+            controlHeightClass,
+          )}
+          onSubmit={submitQuickJump}
+        >
           <label htmlFor={jumperId} className="whitespace-nowrap">
             跳至
           </label>
@@ -348,7 +398,7 @@ function Pagination({
             value={jumperValue}
             aria-label="跳至页码"
             data-slot="pagination-jumper"
-            onChange={event => setJumperValue(event.target.value)}
+            onChange={(event) => setJumperValue(event.target.value)}
             onBlur={() => {
               if (jumperValue.trim()) {
                 submitQuickJump();
@@ -359,7 +409,12 @@ function Pagination({
           <span>页</span>
           {goButton ? (
             typeof goButton === "string" || typeof goButton === "number" ? (
-              <Button variant="secondary" size={size === "large" ? "default" : "sm"} type="submit" disabled={disabled}>
+              <Button
+                variant="secondary"
+                size={size === "large" ? "default" : "sm"}
+                type="submit"
+                disabled={disabled}
+              >
                 {goButton}
               </Button>
             ) : (

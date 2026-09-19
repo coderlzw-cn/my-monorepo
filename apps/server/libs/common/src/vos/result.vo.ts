@@ -24,7 +24,7 @@ export class PageMetaVo {
   page: number;
 
   @ApiProperty({ description: "每页条数", example: 10 })
-  limit: number;
+  pageSize: number;
 
   @ApiProperty({ description: "总数据条数", example: 100 })
   total: number;
@@ -45,13 +45,13 @@ export class PageDataVo<T = any> {
   @ApiProperty({ description: "分页统计元数据", type: () => PageMetaVo })
   meta: PageMetaVo;
 
-  static create<T>(items: T[], total: number, page: number, limit: number): PageDataVo<T> {
-    const pageCount = Math.ceil(total / limit) || 1;
+  static create<T>(items: T[], total: number, page: number, pageSize: number): PageDataVo<T> {
+    const pageCount = Math.ceil(total / pageSize) || 1;
     return {
       items,
       meta: {
         page,
-        limit,
+        pageSize,
         total,
         pageCount,
         hasPreviousPage: page > 1,

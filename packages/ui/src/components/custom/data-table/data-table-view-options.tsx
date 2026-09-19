@@ -4,7 +4,14 @@ import type { RowData } from "@tanstack/react-table";
 import { RiSettings3Line } from "@remixicon/react";
 
 import { Button } from "@workspace/ui/components/shadcn/button";
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@workspace/ui/components/shadcn/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@workspace/ui/components/shadcn/dropdown-menu";
 import { cn } from "@workspace/ui/lib/utils";
 import type { DataTableInstance } from "./types";
 
@@ -20,18 +27,34 @@ function getColumnLabel(column: { id: string; columnDef: { meta?: { label?: stri
 }
 
 /** 显示所有允许隐藏的 accessor 列，并通过 column visibility API 切换可见性。 */
-export function DataTableViewOptions<TData extends RowData>({ table, disabled, className, align = "end" }: DataTableViewOptionsProps<TData>) {
-  const columns = table.getAllColumns().filter((column) => column.getCanHide() && column.accessorFn);
+export function DataTableViewOptions<TData extends RowData>({
+  table,
+  disabled,
+  className,
+  align = "end",
+}: DataTableViewOptionsProps<TData>) {
+  const columns = table
+    .getAllColumns()
+    .filter((column) => column.getCanHide() && column.accessorFn);
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button aria-label="切换列显示" variant="outline" className="ml-auto hidden h-8 lg:flex" disabled={disabled}>
+        <Button
+          aria-label="切换列显示"
+          variant="outline"
+          className="ml-auto hidden h-8 lg:flex"
+          disabled={disabled}
+        >
           <RiSettings3Line className="text-muted-foreground" />
           列设置
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align={align} className={cn("w-44", className)} onCloseAutoFocus={(event) => event.preventDefault()}>
+      <DropdownMenuContent
+        align={align}
+        className={cn("w-44", className)}
+        onCloseAutoFocus={(event) => event.preventDefault()}
+      >
         <DropdownMenuLabel>显示列</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {columns.map((column) => (

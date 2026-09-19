@@ -1,14 +1,22 @@
-import { Controller, Get, Body } from "@nestjs/common";
+import { Controller, Post } from "@nestjs/common";
+import { PrismaService } from "../prisma/prisma.service";
 import { AuthService } from "./auth.service";
 
 @Controller("auth")
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly prismaService: PrismaService,
+  ) {}
 
-  @Get("login")
+  @Post("login")
   async login() {
-    return {
-      message: "login",
-    };
+    try {
+      return this.prismaService.user.findMany();
+    } catch (error) {
+      console.log(error.message);
+      console.log(error.code);
+      console.log();
+    }
   }
 }

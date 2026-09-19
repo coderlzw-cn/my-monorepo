@@ -3,7 +3,9 @@
   "compilerOptions": {
     "declaration": false,
     "sourceMap": false,
-    "outDir": "../../dist"
+    "outDir": "../../dist",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]

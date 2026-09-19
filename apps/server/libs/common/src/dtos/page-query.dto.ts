@@ -24,12 +24,12 @@ export class PageQueryDto {
   })
   @IsOptional()
   @Type(() => Number)
-  @IsInt({ message: "limit 必须为整数" })
-  @Min(1, { message: "limit 最小值为 1" })
-  @Max(100, { message: "limit 最大值为 100" })
-  limit: number = 10;
+  @IsInt({ message: "pageSize 必须为整数" })
+  @Min(1, { message: "pageSize 最小值为 1" })
+  @Max(100, { message: "pageSize 最大值为 100" })
+  pageSize: number = 10;
 
   get skip(): number {
-    return (this.page - 1) * this.limit;
+    return (this.page - 1) * this.pageSize;
   }
 }

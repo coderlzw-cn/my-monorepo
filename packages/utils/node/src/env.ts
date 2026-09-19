@@ -54,7 +54,7 @@ export async function setProjectEnvVariable(name: string, value: string, filePat
     const assignment = `${name}=${serialization}`;
     const lines = content.split(/\r?\n/);
     let replaced = false;
-    const nextLines = lines.flatMap(line => {
+    const nextLines = lines.flatMap((line) => {
       if (ENV_ASSIGNMENT_PATTERN.exec(line)?.[1] !== name) return [line];
       if (replaced) return [];
       replaced = true;
@@ -77,7 +77,7 @@ export async function deleteProjectEnvVariable(name: string, filePath = PROJECT_
   return await serializeProjectEnvMutation(async () => {
     const content = await readProjectEnvFile(filePath);
     const lines = content.split(/\r?\n/);
-    const nextLines = lines.filter(line => ENV_ASSIGNMENT_PATTERN.exec(line)?.[1] !== name);
+    const nextLines = lines.filter((line) => ENV_ASSIGNMENT_PATTERN.exec(line)?.[1] !== name);
     if (nextLines.length === lines.length) return false;
     await writeProjectEnvFile(filePath, nextLines.join("\n"));
     return true;
@@ -256,7 +256,7 @@ export function getEnvArray(key: string, defaultValue?: string[], separator = ",
     return defaultValue;
   }
 
-  return val.split(separator).map(item => item.trim());
+  return val.split(separator).map((item) => item.trim());
 }
 
 /**
@@ -362,7 +362,7 @@ export function getEnvInt(key: string, defaultValue?: number, radix = 10): numbe
   const unsignedValue = /^[+-]/.test(normalizedValue) ? normalizedValue.slice(1) : normalizedValue;
   const hasOnlyValidDigits =
     unsignedValue.length > 0 &&
-    [...unsignedValue.toLowerCase()].every(character => {
+    [...unsignedValue.toLowerCase()].every((character) => {
       const digit = Number.parseInt(character, 36);
       return Number.isInteger(digit) && digit < radix;
     });

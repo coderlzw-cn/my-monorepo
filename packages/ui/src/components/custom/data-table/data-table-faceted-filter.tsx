@@ -6,7 +6,15 @@ import * as React from "react";
 
 import { Badge } from "@workspace/ui/components/shadcn/badge";
 import { Button } from "@workspace/ui/components/shadcn/button";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from "@workspace/ui/components/shadcn/command";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+} from "@workspace/ui/components/shadcn/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@workspace/ui/components/shadcn/popover";
 import { Separator } from "@workspace/ui/components/shadcn/separator";
 import { cn } from "@workspace/ui/lib/utils";
@@ -21,7 +29,13 @@ interface DataTableFacetedFilterProps<TData extends RowData, TValue> {
 }
 
 /** 适用于单选或多选列的分面筛选器；选中值以数组形式写入列筛选状态。 */
-export function DataTableFacetedFilter<TData extends RowData, TValue>({ column, filterValue, title, options, multiple }: DataTableFacetedFilterProps<TData, TValue>) {
+export function DataTableFacetedFilter<TData extends RowData, TValue>({
+  column,
+  filterValue,
+  title,
+  options,
+  multiple,
+}: DataTableFacetedFilterProps<TData, TValue>) {
   const [open, setOpen] = React.useState(false);
 
   const columnFilterValue = filterValue ?? column?.getFilterValue();
@@ -74,7 +88,10 @@ export function DataTableFacetedFilter<TData extends RowData, TValue>({ column, 
           {title}
           {selectedValues?.size > 0 && (
             <>
-              <Separator orientation="vertical" className="mx-0.5 data-[orientation=vertical]:h-4" />
+              <Separator
+                orientation="vertical"
+                className="mx-0.5 data-[orientation=vertical]:h-4"
+              />
               <Badge variant="secondary" className="rounded-sm px-1 font-normal lg:hidden">
                 {selectedValues.size}
               </Badge>
@@ -87,7 +104,11 @@ export function DataTableFacetedFilter<TData extends RowData, TValue>({ column, 
                   options
                     .filter((option) => selectedValues.has(option.value))
                     .map((option) => (
-                      <Badge variant="secondary" key={String(option.value)} className="rounded-sm px-1 font-normal">
+                      <Badge
+                        variant="secondary"
+                        key={String(option.value)}
+                        className="rounded-sm px-1 font-normal"
+                      >
                         {option.label}
                       </Badge>
                     ))
@@ -107,13 +128,26 @@ export function DataTableFacetedFilter<TData extends RowData, TValue>({ column, 
                 const isSelected = selectedValues.has(option.value);
 
                 return (
-                  <CommandItem key={String(option.value)} className="[&>svg:last-child]:hidden" onSelect={() => onItemSelect(option, isSelected)}>
-                    <div className={cn("flex size-4 items-center justify-center rounded-sm border border-primary", isSelected ? "bg-primary text-primary-foreground" : "opacity-50 [&_svg]:invisible")}>
+                  <CommandItem
+                    key={String(option.value)}
+                    className="[&>svg:last-child]:hidden"
+                    onSelect={() => onItemSelect(option, isSelected)}
+                  >
+                    <div
+                      className={cn(
+                        "flex size-4 items-center justify-center rounded-sm border border-primary",
+                        isSelected
+                          ? "bg-primary text-primary-foreground"
+                          : "opacity-50 [&_svg]:invisible",
+                      )}
+                    >
                       <RiCheckLine />
                     </div>
                     {option.icon && <option.icon />}
                     <span className="truncate">{option.label}</span>
-                    {option.count && <span className="ml-auto font-mono text-xs">{option.count}</span>}
+                    {option.count && (
+                      <span className="ml-auto font-mono text-xs">{option.count}</span>
+                    )}
                   </CommandItem>
                 );
               })}

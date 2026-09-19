@@ -1,4 +1,12 @@
-import type { CellContext, Column, ColumnDef, ColumnSort, ReactTable, Row, RowData } from "@tanstack/react-table";
+import type {
+  CellContext,
+  Column,
+  ColumnDef,
+  ColumnSort,
+  ReactTable,
+  Row,
+  RowData,
+} from "@tanstack/react-table";
 import type * as React from "react";
 
 import type { DataTableFeatures } from "./data-table-features";
@@ -52,19 +60,31 @@ export interface ExtendedColumnFilter<TData> extends FilterItemSchema {
 }
 
 /** 对 TanStack v9 ColumnDef 绑定项目的 feature 注册表。 */
-export type DataTableColumnDef<TData extends RowData, TValue = unknown> = ColumnDef<DataTableFeatures, TData, TValue>;
+export type DataTableColumnDef<TData extends RowData, TValue = unknown> = ColumnDef<
+  DataTableFeatures,
+  TData,
+  TValue
+>;
 
 /** 项目 DataTable 实例类型；只暴露已注册 feature 贡献的 API。 */
 export type DataTableInstance<TData extends RowData> = ReactTable<DataTableFeatures, TData>;
 
 /** 单列实例类型，用于列头、筛选器和固定列工具。 */
-export type DataTableColumn<TData extends RowData, TValue = unknown> = Column<DataTableFeatures, TData, TValue>;
+export type DataTableColumn<TData extends RowData, TValue = unknown> = Column<
+  DataTableFeatures,
+  TData,
+  TValue
+>;
 
 /** 行实例类型，保留原始数据 `row.original` 的完整类型。 */
 export type DataTableRow<TData extends RowData> = Row<DataTableFeatures, TData>;
 
 /** 列 cell 回调的上下文类型。 */
-export type DataTableCellContext<TData extends RowData, TValue = unknown> = CellContext<DataTableFeatures, TData, TValue>;
+export type DataTableCellContext<TData extends RowData, TValue = unknown> = CellContext<
+  DataTableFeatures,
+  TData,
+  TValue
+>;
 
 /** 将操作标识与当前行实例绑定，供页面统一管理行级对话框。 */
 export interface DataTableRowAction<TData extends RowData, TAction extends string = string> {

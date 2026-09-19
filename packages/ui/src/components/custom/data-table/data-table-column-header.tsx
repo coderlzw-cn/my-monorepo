@@ -2,19 +2,38 @@
 
 import type { RowData } from "@tanstack/react-table";
 import type * as React from "react";
-import { RiArrowDownSLine, RiExpandUpDownLine, RiArrowUpSLine, RiEyeOffLine, RiCloseLine } from "@remixicon/react";
+import {
+  RiArrowDownSLine,
+  RiExpandUpDownLine,
+  RiArrowUpSLine,
+  RiEyeOffLine,
+  RiCloseLine,
+} from "@remixicon/react";
 
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@workspace/ui/components/shadcn/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@workspace/ui/components/shadcn/dropdown-menu";
 import { cn } from "@workspace/ui/lib/utils";
 import type { DataTableColumn } from "./types";
 
-interface DataTableColumnHeaderProps<TData extends RowData, TValue> extends React.ComponentProps<typeof DropdownMenuTrigger> {
+interface DataTableColumnHeaderProps<TData extends RowData, TValue> extends React.ComponentProps<
+  typeof DropdownMenuTrigger
+> {
   column: DataTableColumn<TData, TValue>;
   label: string;
 }
 
 /** 可排序、清除排序并隐藏当前列的统一列头；能力由 column feature 自动判定。 */
-export function DataTableColumnHeader<TData extends RowData, TValue>({ column, label, className, ...props }: DataTableColumnHeaderProps<TData, TValue>) {
+export function DataTableColumnHeader<TData extends RowData, TValue>({
+  column,
+  label,
+  className,
+  ...props
+}: DataTableColumnHeaderProps<TData, TValue>) {
   if (!column.getCanSort() && !column.getCanHide()) {
     return <div className={cn(className)}>{label}</div>;
   }
@@ -29,7 +48,14 @@ export function DataTableColumnHeader<TData extends RowData, TValue>({ column, l
         {...props}
       >
         {label}
-        {column.getCanSort() && (column.getIsSorted() === "desc" ? <RiArrowDownSLine /> : column.getIsSorted() === "asc" ? <RiArrowUpSLine /> : <RiExpandUpDownLine />)}
+        {column.getCanSort() &&
+          (column.getIsSorted() === "desc" ? (
+            <RiArrowDownSLine />
+          ) : column.getIsSorted() === "asc" ? (
+            <RiArrowUpSLine />
+          ) : (
+            <RiExpandUpDownLine />
+          ))}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-28">
         {column.getCanSort() && (
@@ -51,7 +77,10 @@ export function DataTableColumnHeader<TData extends RowData, TValue>({ column, l
               降序
             </DropdownMenuCheckboxItem>
             {column.getIsSorted() && (
-              <DropdownMenuItem className="pl-2 [&_svg]:text-muted-foreground" onClick={() => column.clearSorting()}>
+              <DropdownMenuItem
+                className="pl-2 [&_svg]:text-muted-foreground"
+                onClick={() => column.clearSorting()}
+              >
                 <RiCloseLine />
                 重置
               </DropdownMenuItem>

@@ -43,7 +43,7 @@ export type LoggerMiddlewareConfig = boolean | LoggerMiddlewareOptions;
 const DEFAULT_LOGGER_OPTIONS: LoggerMiddlewareOptions = {
   logBody: false,
   slowThresholdMs: 1000,
-  excludePaths: ["/health", "/favicon.ico"],
+  excludePaths: ["/health", "/swagger", "/favicon.ico"],
   sanitizedFields: ["password", "token", "accessToken", "refreshToken", "secret"],
 };
 
@@ -59,7 +59,7 @@ const DEFAULT_LOGGER_OPTIONS: LoggerMiddlewareOptions = {
  */
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
-  private readonly logger = new Logger("HTTP");
+  private readonly logger = new Logger(LoggerMiddleware.name);
   private readonly logBody: boolean;
   private readonly slowThresholdMs: number;
   private readonly excludePaths: (string | RegExp)[];

@@ -22,7 +22,7 @@ export async function setupSwagger(app: INestApplication): Promise<void> {
   const appName = configService.get<string>("APP_NAME", "Enterprise API Platform");
   const appDesc = configService.get<string>("APP_DESC", "NestJS Enterprise API Documentation");
   const appVersion = configService.get<string>("APP_VERSION", "1.0.0");
-  const swaggerPath = configService.get<string>("SWAGGER_PATH", "docs");
+  const swaggerPath = "swagger"; // configService.get<string>("SWAGGER_PATH", "docs");
 
   // 构建 OpenAPI 契约
   const builder = new DocumentBuilder()
@@ -59,16 +59,14 @@ export async function setupSwagger(app: INestApplication): Promise<void> {
       "API-Key-auth",
     );
 
-  // 如果项目配置了统一路由前缀 (例如 /api/v1)，确保文档显示正常
-  const globalPrefix = configService.get<string>("GLOBAL_PREFIX", "");
-  if (globalPrefix) {
-    builder.addServer(`/${globalPrefix.replace(/^\/+|\/+$/g, "")}`);
-  } else {
-    builder.addServer("/");
-  }
-
   const config = builder.build();
-  const document = SwaggerModule.createDocument(app, config);
+  const document = SwaggerModule.createDocument(app, config, {
+    operationIdFactory: (controllerKey, methodKey) => {
+      const controllerName = controllerKey.replace(/Controller$/i, "").replace(/V\d+$/i, "");
+      const methodName = methodKey.replace(/V\d+$/i, "");
+      return `${controllerName}${methodName.charAt(0).toUpperCase() + methodName.slice(1)}`;
+    },
+  });
 
   // 挂载 Swagger UI
   SwaggerModule.setup(swaggerPath, app, document, {

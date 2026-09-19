@@ -1,7 +1,12 @@
-import { INestApplication } from "@nestjs/common";
+import { INestApplication, RequestMethod } from "@nestjs/common";
 
-export function setupPrefix(app: INestApplication, prefix = "api/v1"): void {
+export function setupPrefix(app: INestApplication, prefix = "api"): void {
   if (prefix) {
-    app.setGlobalPrefix(prefix);
+    app.setGlobalPrefix(prefix, {
+      exclude: [
+        { path: "health", method: RequestMethod.ALL },
+        { path: "health/{*path}", method: RequestMethod.ALL },
+      ],
+    });
   }
 }

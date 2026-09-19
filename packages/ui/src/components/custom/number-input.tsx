@@ -4,7 +4,13 @@ import { RiAddLine, RiSubtractLine } from "@remixicon/react";
 import * as React from "react";
 
 import { Input } from "@workspace/ui/components/shadcn/input";
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput, InputGroupText } from "@workspace/ui/components/shadcn/input-group";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+  InputGroupText,
+} from "@workspace/ui/components/shadcn/input-group";
 
 /** 数字输入校验配置。 */
 export interface NumberInputValidationOptions {
@@ -22,7 +28,10 @@ export interface NumberInputFormatOptions {
   allowScientific?: boolean;
 }
 
-export interface NumberInputProps extends Omit<React.ComponentProps<"input">, "value" | "defaultValue" | "onChange" | "type" | "inputMode" | "min" | "max" | "step" | "prefix"> {
+export interface NumberInputProps extends Omit<
+  React.ComponentProps<"input">,
+  "value" | "defaultValue" | "onChange" | "type" | "inputMode" | "min" | "max" | "step" | "prefix"
+> {
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
@@ -64,7 +73,10 @@ function resolveFormatOptions(options: NumberInputFormatOptions & { integer?: bo
 }
 
 /** 判断当前输入内容是否处于可继续编辑的中间态。 */
-export function isPartialNumberInput(value: string, options: NumberInputFormatOptions & { integer?: boolean } = {}): boolean {
+export function isPartialNumberInput(
+  value: string,
+  options: NumberInputFormatOptions & { integer?: boolean } = {},
+): boolean {
   if (value.length === 0) return true;
 
   const format = resolveFormatOptions(options);
@@ -72,21 +84,35 @@ export function isPartialNumberInput(value: string, options: NumberInputFormatOp
   if (!format.allowDecimal && value.includes(".")) return false;
   if (!format.allowScientific && /[eE]/u.test(value)) return false;
 
-  const pattern = format.allowScientific ? SCIENTIFIC_PARTIAL_PATTERN : format.allowDecimal ? DECIMAL_PARTIAL_PATTERN : INTEGER_PARTIAL_PATTERN;
+  const pattern = format.allowScientific
+    ? SCIENTIFIC_PARTIAL_PATTERN
+    : format.allowDecimal
+      ? DECIMAL_PARTIAL_PATTERN
+      : INTEGER_PARTIAL_PATTERN;
   return pattern.test(value);
 }
 
 /** 将输入字符串解析为有限数字；不完整或非法输入返回 `undefined`。 */
 export function parseNumberInputValue(value: string): number | undefined {
   const normalized = value.trim();
-  if (normalized.length === 0 || normalized === "-" || normalized === "." || normalized === "-." || /[eE][+-]?$/u.test(normalized)) return undefined;
+  if (
+    normalized.length === 0 ||
+    normalized === "-" ||
+    normalized === "." ||
+    normalized === "-." ||
+    /[eE][+-]?$/u.test(normalized)
+  )
+    return undefined;
 
   const parsed = Number(normalized);
   return Number.isFinite(parsed) ? parsed : undefined;
 }
 
 /** 判断输入是否为完整合法数字。 */
-export function isNumberInputValid(value: string, options: NumberInputValidationOptions = {}): boolean {
+export function isNumberInputValid(
+  value: string,
+  options: NumberInputValidationOptions = {},
+): boolean {
   const { min, max, integer = false, allowNegative = true, allowEmpty = false } = options;
   if (value.trim().length === 0) return allowEmpty;
 
@@ -106,7 +132,10 @@ function normalizeNumberInputValue(value: string, integer: boolean): string {
 }
 
 function clampNumber(value: number, min?: number, max?: number): number {
-  return Math.min(max ?? Number.POSITIVE_INFINITY, Math.max(min ?? Number.NEGATIVE_INFINITY, value));
+  return Math.min(
+    max ?? Number.POSITIVE_INFINITY,
+    Math.max(min ?? Number.NEGATIVE_INFINITY, value),
+  );
 }
 
 function NumberInput({
@@ -219,10 +248,20 @@ function NumberInput({
         {suffix !== undefined ? <InputGroupText>{suffix}</InputGroupText> : null}
         {showStepButtons ? (
           <>
-            <InputGroupButton aria-label="减小数值" disabled={disabled || readOnly} size="icon-xs" onClick={() => changeByStep(-1)}>
+            <InputGroupButton
+              aria-label="减小数值"
+              disabled={disabled || readOnly}
+              size="icon-xs"
+              onClick={() => changeByStep(-1)}
+            >
               <RiSubtractLine aria-hidden="true" />
             </InputGroupButton>
-            <InputGroupButton aria-label="增大数值" disabled={disabled || readOnly} size="icon-xs" onClick={() => changeByStep(1)}>
+            <InputGroupButton
+              aria-label="增大数值"
+              disabled={disabled || readOnly}
+              size="icon-xs"
+              onClick={() => changeByStep(1)}
+            >
               <RiAddLine aria-hidden="true" />
             </InputGroupButton>
           </>

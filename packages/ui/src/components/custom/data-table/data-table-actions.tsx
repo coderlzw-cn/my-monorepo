@@ -3,7 +3,13 @@ import type { RowData } from "@tanstack/react-table";
 import { Fragment, type Dispatch, type SetStateAction } from "react";
 
 import { Button } from "@workspace/ui/components/shadcn/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@workspace/ui/components/shadcn/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@workspace/ui/components/shadcn/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@workspace/ui/components/shadcn/tooltip";
 import { cn } from "@workspace/ui/lib/utils";
 import type { DataTableCellContext, DataTableRowAction } from "./types";
@@ -28,7 +34,12 @@ export interface DataTableActionsProps<TData extends RowData, TAction extends st
 }
 
 /** 渲染带可访问名称和提示的行级图标操作，点击后将行与操作类型回传页面。 */
-export function DataTableActions<TData extends RowData, TAction extends string = string>({ cellContext, items, setRowAction, visibleCount = items.length }: DataTableActionsProps<TData, TAction>) {
+export function DataTableActions<TData extends RowData, TAction extends string = string>({
+  cellContext,
+  items,
+  setRowAction,
+  visibleCount = items.length,
+}: DataTableActionsProps<TData, TAction>) {
   const visibleItems = items.slice(0, visibleCount);
   const overflowItems = items.slice(visibleCount);
   const selectAction = (type: TAction) => setRowAction({ type, row: cellContext.row });
@@ -40,12 +51,21 @@ export function DataTableActions<TData extends RowData, TAction extends string =
           <TooltipTrigger asChild>
             <Button
               aria-label={item.tooltip}
-              className={cn("size-8 rounded-md p-0 transition-all hover:bg-primary/10 hover:text-primary", item.variant === "destructive" && "group")}
+              className={cn(
+                "size-8 rounded-md p-0 transition-all hover:bg-primary/10 hover:text-primary",
+                item.variant === "destructive" && "group",
+              )}
               type="button"
               variant="ghost"
               onClick={() => selectAction(item.type)}
             >
-              <item.icon className={cn("size-4", item.variant === "destructive" && "text-red-500/80 transition-colors group-focus:text-red-600 dark:group-focus:text-red-400")} />
+              <item.icon
+                className={cn(
+                  "size-4",
+                  item.variant === "destructive" &&
+                    "text-red-500/80 transition-colors group-focus:text-red-600 dark:group-focus:text-red-400",
+                )}
+              />
             </Button>
           </TooltipTrigger>
           <TooltipContent className="px-2.5 py-1.5 text-xs" side="top">
@@ -56,7 +76,12 @@ export function DataTableActions<TData extends RowData, TAction extends string =
       {overflowItems.length > 0 && (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button aria-label="更多操作" className="size-8 rounded-md p-0" type="button" variant="ghost">
+            <Button
+              aria-label="更多操作"
+              className="size-8 rounded-md p-0"
+              type="button"
+              variant="ghost"
+            >
               <RiMoreFill aria-hidden="true" className="size-4" />
             </Button>
           </DropdownMenuTrigger>

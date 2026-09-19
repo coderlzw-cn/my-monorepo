@@ -53,7 +53,11 @@ interface DataTableDateFilterProps<TData extends RowData> {
 }
 
 /** 将单日期或日期范围转为时间戳 filter value 的列筛选器。 */
-export function DataTableDateFilter<TData extends RowData>({ column, title, multiple }: DataTableDateFilterProps<TData>) {
+export function DataTableDateFilter<TData extends RowData>({
+  column,
+  title,
+  multiple,
+}: DataTableDateFilterProps<TData>) {
   const columnFilterValue = column.getFilterValue();
 
   const selectedDates = React.useMemo<DateSelection>(() => {
@@ -129,7 +133,10 @@ export function DataTableDateFilter<TData extends RowData>({ column, title, mult
           <span>{title}</span>
           {hasSelectedDates && (
             <>
-              <Separator orientation="vertical" className="mx-0.5 data-[orientation=vertical]:h-4" />
+              <Separator
+                orientation="vertical"
+                className="mx-0.5 data-[orientation=vertical]:h-4"
+              />
               <span>{dateText}</span>
             </>
           )}
@@ -177,9 +184,22 @@ export function DataTableDateFilter<TData extends RowData>({ column, title, mult
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
         {multiple ? (
-          <Calendar autoFocus captionLayout="dropdown" mode="range" selected={getIsDateRange(selectedDates) ? selectedDates : { from: undefined, to: undefined }} onSelect={onSelect} />
+          <Calendar
+            autoFocus
+            captionLayout="dropdown"
+            mode="range"
+            selected={
+              getIsDateRange(selectedDates) ? selectedDates : { from: undefined, to: undefined }
+            }
+            onSelect={onSelect}
+          />
         ) : (
-          <Calendar captionLayout="dropdown" mode="single" selected={!getIsDateRange(selectedDates) ? selectedDates[0] : undefined} onSelect={onSelect} />
+          <Calendar
+            captionLayout="dropdown"
+            mode="single"
+            selected={!getIsDateRange(selectedDates) ? selectedDates[0] : undefined}
+            onSelect={onSelect}
+          />
         )}
       </PopoverContent>
     </Popover>

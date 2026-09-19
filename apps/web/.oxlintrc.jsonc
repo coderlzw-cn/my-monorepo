@@ -10,7 +10,6 @@
     "react/only-export-components": ["warn", { "allowConstantExport": true }],
     // React 17+ 使用自动 JSX 运行时（tsconfig 的 jsx: react-jsx），无需手动引入 React
     "react/react-in-jsx-scope": "off",
-
   },
   "settings": {
     // 使用的是 Tailwind CSS v4，还应该配置 settings，把插件指向 Tailwind 的 CSS 入口

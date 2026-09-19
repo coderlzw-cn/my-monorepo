@@ -188,7 +188,7 @@ function createReplacer(replacer: JsonReplacer | JsonReplacerKeyList | undefined
     return keyList ? [...keyList] : replacer;
   }
 
-  const allowedKeys = keyList ? new Set(keyList.map(key => String(key))) : undefined;
+  const allowedKeys = keyList ? new Set(keyList.map((key) => String(key))) : undefined;
   const replacerFunction = typeof replacer === "function" ? replacer : undefined;
   const sortedObjects = new WeakMap<object, Record<string, unknown>>();
   let isRootCall = true;
@@ -214,7 +214,7 @@ function createReplacer(replacer: JsonReplacer | JsonReplacerKeyList | undefined
 
     // 通过按序重新插入属性构造浅对象；后续递归和值序列化仍交给底层序列化器。
     // WeakMap 保证共享引用复用同一个代理对象，同时不会阻止源对象被垃圾回收。
-    const propertyKeys = Object.keys(replacedValue).filter(propertyKey => allowedKeys === undefined || allowedKeys.has(propertyKey));
+    const propertyKeys = Object.keys(replacedValue).filter((propertyKey) => allowedKeys === undefined || allowedKeys.has(propertyKey));
     if (sortKeys) {
       propertyKeys.sort((first, second) => first.localeCompare(second));
     }
@@ -254,18 +254,12 @@ function assertParseOptions(text: string, format: JsonFormat, reviver: JsonReviv
   }
 }
 
-function assertStringifyOptions(
-  format: JsonFormat,
-  replacer: JsonReplacer | readonly (string | number)[] | undefined,
-  space: string | number | undefined,
-  sortKeys: boolean,
-  omitNullish: boolean,
-) {
+function assertStringifyOptions(format: JsonFormat, replacer: JsonReplacer | readonly (string | number)[] | undefined, space: string | number | undefined, sortKeys: boolean, omitNullish: boolean) {
   assertJsonFormat(format);
   if (replacer !== undefined && typeof replacer !== "function" && !Array.isArray(replacer)) {
     throw new TypeError("replacer must be a function or an array of property names");
   }
-  if (Array.isArray(replacer) && replacer.some(key => typeof key !== "string" && typeof key !== "number")) {
+  if (Array.isArray(replacer) && replacer.some((key) => typeof key !== "string" && typeof key !== "number")) {
     throw new TypeError("replacer property names must be strings or numbers");
   }
   if (space !== undefined && typeof space !== "string" && typeof space !== "number") {

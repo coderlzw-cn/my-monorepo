@@ -52,7 +52,7 @@ const DEFAULT_TIMEOUT_INTERCEPTOR_OPTIONS: TimeoutInterceptorOptions = {
  */
 @Injectable()
 export class TimeoutInterceptor implements NestInterceptor {
-  private readonly logger = new Logger("TimeoutInterceptor");
+  private readonly logger = new Logger(TimeoutInterceptor.name);
   private readonly defaultTimeoutMs: number;
   private readonly errorMessage: string;
   private readonly logOnTimeout: boolean;
@@ -77,9 +77,7 @@ export class TimeoutInterceptor implements NestInterceptor {
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     // 非 HTTP 请求（如 RPC、WebSocket）跳过
-    if (context.getType() !== "http") {
-      return next.handle();
-    }
+    if (context.getType() !== "http") return next.handle();
 
     // 1. 优先从 Reflector 中读取通过 `@SetTimeout(ms)` 设置的自定义超时阈值
     let targetTimeoutMs = this.defaultTimeoutMs;

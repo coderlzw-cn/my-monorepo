@@ -42,9 +42,9 @@ export type LoggingInterceptorConfig = boolean | LoggingInterceptorOptions;
  * 默认配置常量
  */
 const DEFAULT_LOGGING_INTERCEPTOR_OPTIONS: LoggingInterceptorOptions = {
-  slowThresholdMs: 1000,
+  slowThresholdMs: 3000,
   includeHandlerName: true,
-  logResponseBody: false,
+  logResponseBody: true,
   sanitizedFields: ["password", "token", "accessToken", "refreshToken", "secret"],
 };
 
@@ -59,7 +59,7 @@ const DEFAULT_LOGGING_INTERCEPTOR_OPTIONS: LoggingInterceptorOptions = {
  */
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
-  private readonly logger = new Logger("HandlerLog");
+  private readonly logger = new Logger(LoggingInterceptor.name);
   private readonly slowThresholdMs: number;
   private readonly includeHandlerName: boolean;
   private readonly logResponseBody: boolean;
@@ -83,13 +83,12 @@ export class LoggingInterceptor implements NestInterceptor {
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     // 仅针对 HTTP 上下文进行拦截处理（忽略 GraphQL / WebSocket / Microservice 等场景）
-    if (context.getType() !== "http") {
-      return next.handle();
-    }
+    if (context.getType() !== "http") return next.handle();
 
     const httpContext = context.switchToHttp();
     const httpRequest = httpContext.getRequest<Request>();
     const { method, originalUrl } = httpRequest;
+    console.log(originalUrl);
 
     // 获取当前调用的 Class 名称与 Handler 方法名
     const controllerName = context.getClass().name;
@@ -136,19 +135,15 @@ export class LoggingInterceptor implements NestInterceptor {
    * 对响应数据中的敏感字段进行掩码脱敏处理
    */
   private sanitize<T>(data: T): T {
-    if (!data || typeof data !== "object") {
-      return data;
-    }
+    if (!data || typeof data !== "object") return data;
 
-    if (Array.isArray(data)) {
-      return data.map((item) => this.sanitize(item)) as unknown as T;
-    }
+    if (Array.isArray(data)) return data.map((item) => this.sanitize(item)) as unknown as T;
 
     const sanitizedObj = { ...data } as Record<string, unknown>;
 
     for (const key of Object.keys(sanitizedObj)) {
       if (this.sanitizedFields.some((field) => field.toLowerCase() === key.toLowerCase())) {
-        sanitizedObj[key] = "***";
+        sanitizedObj[key] = "******";
       } else if (typeof sanitizedObj[key] === "object" && sanitizedObj[key] !== null) {
         sanitizedObj[key] = this.sanitize(sanitizedObj[key]);
       }

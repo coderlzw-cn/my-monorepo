@@ -162,7 +162,16 @@
   }
 
   /* 文本输入 */
-  input:not([type="button"], [type="submit"], [type="reset"], [type="checkbox"], [type="radio"], [type="file"], [type="range"], [type="color"]),
+  input:not(
+    [type="button"],
+    [type="submit"],
+    [type="reset"],
+    [type="checkbox"],
+    [type="radio"],
+    [type="file"],
+    [type="range"],
+    [type="color"]
+  ),
   textarea,
   [contenteditable="true"] {
     cursor: text;

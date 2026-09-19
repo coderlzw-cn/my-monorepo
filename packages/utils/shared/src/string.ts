@@ -186,7 +186,7 @@ export function words(value: string): string[] {
     .replace(/([\p{Ll}\p{N}])(\p{Lu})/gu, "$1 $2")
     .replace(/(\p{Lu}+)(\p{Lu}\p{Ll})/gu, "$1 $2")
     .split(/[^\p{L}\p{N}]+/u)
-    .filter(word => word.length > 0);
+    .filter((word) => word.length > 0);
 }
 
 /** 转换为 camelCase。 */
@@ -196,13 +196,13 @@ export function toCamelCase(value: string, options: WordCaseOptions = {}): strin
     return "";
   }
 
-  return first + rest.map(word => capitalize(word, options.locales)).join("");
+  return first + rest.map((word) => capitalize(word, options.locales)).join("");
 }
 
 /** 转换为 PascalCase。 */
 export function toPascalCase(value: string, options: WordCaseOptions = {}): string {
   return normalizedWords(value, options.locales)
-    .map(word => capitalize(word, options.locales))
+    .map((word) => capitalize(word, options.locales))
     .join("");
 }
 
@@ -218,7 +218,7 @@ export function toSnakeCase(value: string, options: WordCaseOptions = {}): strin
 
 /** 转义 HTML 文本节点中具有特殊意义的字符。 */
 export function escapeHtml(value: string): string {
-  return value.replace(/[&<>"']/gu, character => HTML_ESCAPE_LOOKUP[character] ?? character);
+  return value.replace(/[&<>"']/gu, (character) => HTML_ESCAPE_LOOKUP[character] ?? character);
 }
 
 /** 转义正则表达式元字符，使输入可安全嵌入 `RegExp` 模式。 */
@@ -256,7 +256,7 @@ export function maskString(value: string, options: MaskStringOptions = {}): stri
 }
 
 function normalizedWords(value: string, locales?: Intl.LocalesArgument): string[] {
-  return words(value).map(word => word.toLocaleLowerCase(locales));
+  return words(value).map((word) => word.toLocaleLowerCase(locales));
 }
 
 interface ResolvedStringValidationOptions {

@@ -1,7 +1,14 @@
 import type * as React from "react";
 
 import { Skeleton } from "@workspace/ui/components/shadcn/skeleton";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@workspace/ui/components/shadcn/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@workspace/ui/components/shadcn/table";
 import { dataTableConfig } from "./config";
 import { cn } from "@workspace/ui/lib/utils";
 
@@ -29,16 +36,30 @@ export function DataTableSkeleton({
   className,
   ...props
 }: DataTableSkeletonProps) {
-  const cozyCellWidths = Array.from({ length: columnCount }, (_, index) => cellWidths[index % cellWidths.length] ?? "auto");
+  const cozyCellWidths = Array.from(
+    { length: columnCount },
+    (_, index) => cellWidths[index % cellWidths.length] ?? "auto",
+  );
 
   return (
     <div className={cn("flex w-full flex-col gap-2.5 overflow-auto", className)} {...props}>
       <div className="flex w-full items-center justify-between gap-2 overflow-auto p-1">
-        <div className="flex flex-1 items-center gap-2">{filterCount > 0 ? Array.from({ length: filterCount }).map((_, i) => <Skeleton key={i} className="h-7 w-18 border-dashed" />) : null}</div>
+        <div className="flex flex-1 items-center gap-2">
+          {filterCount > 0
+            ? Array.from({ length: filterCount }).map((_, i) => (
+                <Skeleton key={i} className="h-7 w-18 border-dashed" />
+              ))
+            : null}
+        </div>
         {withViewOptions ? <Skeleton className="ml-auto hidden h-7 w-18 lg:flex" /> : null}
       </div>
       <div className="rounded-md border">
-        <Table className={cn(bordered && "[&_td]:border-r [&_td:last-child]:border-r-0 [&_th]:border-r [&_th:last-child]:border-r-0")}>
+        <Table
+          className={cn(
+            bordered &&
+              "[&_td]:border-r [&_td:last-child]:border-r-0 [&_th]:border-r [&_th:last-child]:border-r-0",
+          )}
+        >
           <TableHeader>
             {Array.from({ length: 1 }).map((_, i) => (
               <TableRow key={i} className="hover:bg-transparent">

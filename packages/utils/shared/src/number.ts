@@ -402,7 +402,7 @@ export function average(values: readonly number[]): number | undefined {
   }
 
   // 先按数量缩放再求和，避免总和溢出但平均值本可表示的情况。
-  return sum(values.map(value => value / values.length));
+  return sum(values.map((value) => value / values.length));
 }
 
 /**

@@ -6,9 +6,9 @@ import { ChangePasswordCard } from "./ChangePasswordCard";
 import { ProfileDetailsCard } from "./ProfileDetailsCard";
 import { SessionsCard } from "./SessionsCard";
 import { useAuthStore } from "@/stores/auth.store";
-import   { Avatar, AvatarFallback } from "@workspace/ui/components/shadcn/avatar";
-import   { Button } from "@workspace/ui/components/shadcn/button";
-import   { Card, CardContent } from "@workspace/ui/components/shadcn/card";
+import { Avatar, AvatarFallback } from "@workspace/ui/components/shadcn/avatar";
+import { Button } from "@workspace/ui/components/shadcn/button";
+import { Card, CardContent } from "@workspace/ui/components/shadcn/card";
 
 export default function ProfilePage() {
   const navigate = useNavigate();

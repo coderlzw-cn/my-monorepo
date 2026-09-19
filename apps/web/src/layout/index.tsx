@@ -4,7 +4,7 @@ import { NavUser } from "./nav-user";
 import { Link, useMatches } from "react-router";
 import { Suspense } from "react";
 
-import {BreadcrumbTrail, type BreadcrumbTrailItem} from "@workspace/ui/components/custom/breadcrumb-trail"
+import { BreadcrumbTrail, type BreadcrumbTrailItem } from "@workspace/ui/components/custom/breadcrumb-trail";
 import { SidebarInset, SidebarProvider } from "@workspace/ui/components/shadcn/sidebar";
 export default function Page() {
   const matches = useMatches();

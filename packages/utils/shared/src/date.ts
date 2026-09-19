@@ -433,9 +433,9 @@ export function formatDuration(duration: number, options: FormatDurationOptions 
   const availableUnits = showMilliseconds ? units : units.slice(0, -1);
 
   const parts = availableUnits
-    .filter(item => item.value > 0)
+    .filter((item) => item.value > 0)
     .slice(0, maxUnits)
-    .map(item => (compact ? `${item.value}${item.compact}` : `${item.value}${item.normal}`));
+    .map((item) => (compact ? `${item.value}${item.compact}` : `${item.value}${item.normal}`));
 
   if (parts.length === 0) {
     return compact ? (showMilliseconds ? "0ms" : "0s") : showMilliseconds ? "0毫秒" : "0秒";
@@ -829,7 +829,7 @@ function getDateParts(date: Date, options: { locale: string; timeZone?: string }
   });
 
   const parts = formatter.formatToParts(date);
-  const partMap = new Map(parts.map(part => [part.type, part.value]));
+  const partMap = new Map(parts.map((part) => [part.type, part.value]));
 
   return {
     year: padDatePart(partMap.get("year"), 4),
@@ -861,7 +861,7 @@ function isValidTimeZone(timeZone?: string): boolean {
 }
 
 function isValidAddDateOptions(options: AddDateOptions): boolean {
-  return typeof options === "object" && options !== null && Object.values(options).every(value => value === undefined || Number.isInteger(value));
+  return typeof options === "object" && options !== null && Object.values(options).every((value) => value === undefined || Number.isInteger(value));
 }
 
 function applyDatePattern(pattern: string, parts: DateParts): string {
@@ -875,7 +875,7 @@ function applyDatePattern(pattern: string, parts: DateParts): string {
     ["SSS", parts.millisecond],
   ]);
 
-  return pattern.replace(/YYYY|SSS|MM|DD|HH|mm|ss/g, token => tokens.get(token) ?? token);
+  return pattern.replace(/YYYY|SSS|MM|DD|HH|mm|ss/g, (token) => tokens.get(token) ?? token);
 }
 
 function normalizeTimestamp(value: number, unit: TimestampUnit): number {
@@ -915,7 +915,7 @@ function normalizeDateString(value: string): string {
 function selectRelativeUnit(diffMs: number): { value: number; unit: Intl.RelativeTimeFormatUnit } {
   const absolute = Math.abs(diffMs);
 
-  const selected = RELATIVE_TIME_UNITS.find(item => absolute >= item.milliseconds) ?? { unit: "second", milliseconds: MILLISECONDS_PER_SECOND };
+  const selected = RELATIVE_TIME_UNITS.find((item) => absolute >= item.milliseconds) ?? { unit: "second", milliseconds: MILLISECONDS_PER_SECOND };
 
   return { value: Math.round(diffMs / selected.milliseconds), unit: selected.unit };
 }
